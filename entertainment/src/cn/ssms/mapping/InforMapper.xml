@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.ssms.dao.InforMapper" >
+    <resultMap id="BaseResultMap" type="cn.ssms.model.Infor" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="classify_id" property="classifyId" jdbcType="INTEGER" />
+        <result column="title" property="title" jdbcType="VARCHAR" />
+        <result column="author" property="author" jdbcType="VARCHAR" />
+        <result column="digest" property="digest" jdbcType="VARCHAR" />
+        <result column="content" property="content" jdbcType="VARCHAR" />
+        <result column="state" property="state" jdbcType="INTEGER" />
+        <result column="add_person" property="addPerson" jdbcType="INTEGER" />
+        <result column="add_date" property="addDate" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, classify_id, title, author, digest, content, state, add_person, add_date
+    </sql>
+
+   <!--  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from t_infor
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <insert id="insert" parameterType="cn.ssms.model.Infor" >
+        insert into t_infor (id, classify_id, title, 
+            digest, content, state, 
+            add_person, add_date)
+        values (#{id,jdbcType=INTEGER}, #{classifyId,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, 
+            #{digest,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER}, 
+            #{addPerson,jdbcType=INTEGER}, #{addDate,jdbcType=TIMESTAMP})
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="cn.ssms.model.Infor" >
+        update t_infor
+        <set >
+            <if test="classifyId != null" >
+                classify_id = #{classifyId,jdbcType=INTEGER},
+            </if>
+            <if test="title != null" >
+                title = #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="digest != null" >
+                digest = #{digest,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null" >
+                content = #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="state != null" >
+                state = #{state,jdbcType=INTEGER},
+            </if>
+            <if test="addPerson != null" >
+                add_person = #{addPerson,jdbcType=INTEGER},
+            </if>
+            <if test="addDate != null" >
+                add_date = #{addDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from t_infor
+        where id = #{id,jdbcType=INTEGER}
+    </delete> -->
+    
+    <select id="getInforList" parameterType="Integer" resultType="HashMap">
+    	SELECT
+			id,
+			title,
+			digest,
+			DATE_FORMAT(add_date, "%Y-%m-%d") addDate,
+			(
+				SELECT
+					count(*)
+				FROM
+					t_comments t
+				WHERE
+					t.id = a.id
+			) count
+		FROM
+			t_infor a
+		where a.state=1  and  a.classify_id=#{classifyId}
+    </select>
+    
+    
+    <select id="getInforById" parameterType="Integer" resultType="HashMap" >
+		    SELECT
+				id,
+				title,
+				author,
+				DATE_FORMAT(add_date, "%Y-%m-%d") addDate,
+				content
+			FROM
+				t_infor a
+			where a.state=1  and  a.id=#{id}
+    </select>
+
+	<select id="getInforByClassFiyId" parameterType="HashMap" resultType="cn.ssms.model.Infor" >
+		    SELECT *  FROM t_infor
+			where 1=1
+			<if test="classifyId != null" >
+				and classify_id=#{classifyId}
+			</if>
+			and state=1
+
+    </select>
+</mapper>

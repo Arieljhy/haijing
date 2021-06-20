@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.ssms.dao.LiveMapper" >
+  <resultMap id="BaseResultMap" type="cn.ssms.model.Live" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="time" property="time" jdbcType="TIMESTAMP" />
+    <result column="timeStr" property="timeStr" jdbcType="VARCHAR" />
+    <result column="record" property="record" jdbcType="VARCHAR" />
+    <result column="person" property="person" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="VARCHAR" />
+    <result column="stateStr" property="stateStr" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, code, name, time, record, person, state, create_time, modify_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />, date_format(time, '%Y-%m-%d %H:%I:%S') timeStr
+    from t_live
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_live
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="cn.ssms.model.Live" >
+    insert into t_live (id, code, name,
+      time, record, person,
+      state, create_time, modify_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{code,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
+      #{time,jdbcType=TIMESTAMP}, #{record,jdbcType=VARCHAR}, #{person,jdbcType=VARCHAR},
+      #{state,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="cn.ssms.model.Live" >
+    insert into t_live
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="code != null" >
+        code,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="time != null" >
+        time,
+      </if>
+      <if test="record != null" >
+        record,
+      </if>
+      <if test="person != null" >
+        person,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="modifyTime != null" >
+        modify_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="code != null" >
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null" >
+        #{time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record != null" >
+        #{record,jdbcType=VARCHAR},
+      </if>
+      <if test="person != null" >
+        #{person,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.ssms.model.Live" >
+    update t_live
+    <set >
+      <if test="code != null" >
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null" >
+        time = #{time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record != null" >
+        record = #{record,jdbcType=VARCHAR},
+      </if>
+      <if test="person != null" >
+        person = #{person,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyTime != null" >
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.ssms.model.Live" >
+    update t_live
+    set code = #{code,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      time = #{time,jdbcType=TIMESTAMP},
+      record = #{record,jdbcType=VARCHAR},
+      person = #{person,jdbcType=VARCHAR},
+      state = #{state,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateStatusByIds"  parameterType="HashMap" >
+    update t_live set state = #{state}
+    where id in
+    <foreach collection="ids" item="id" open="(" close=")" separator="," >
+      #{id}
+    </foreach>
+  </update>
+  <select id="getLiveList" resultMap="BaseResultMap" parameterType="HashMap" >
+    select
+    id,
+    code,
+    (case state when 0 then '待直播' when 1 then '删除' when 2 then '直播中' when 3 then '直播结束' when 4 then '视频编码中' when 5 then '视频编码失败' end )stateStr,
+    state,
+    name,
+    person,
+    (case record when 0 then '否' else '是' end)record,
+    date_format(time, '%Y-%m-%d %H:%I:%S') timeStr
+    from t_live
+    where state!='1'
+    <if test=" name !=null and userName !=''">
+      and name like CONCAT('%',#{name,jdbcType=VARCHAR},'%' )
+    </if>
+
+    order by create_time DESC
+    limit #{page, jdbcType=INTEGER} , #{pageSize, jdbcType=INTEGER}
+  </select>
+
+  <select id="getLiveListTotal" resultType="int" parameterType="HashMap" >
+    select
+    count(1)
+    from t_live
+    where state!='1'
+
+    <if test=" name !=null and userName !=''">
+      and name like CONCAT('%',#{name,jdbcType=VARCHAR},'%' )
+    </if>
+
+  </select>
+  <select id="checkName" resultType="java.lang.Integer">
+    select count(1) from t_live where name = #{name} and state != '1'
+  </select>
+  <select id="checkCode" resultType="java.lang.Integer">
+     select count(1) from t_live where code = #{code} and state != '1'
+  </select>
+  <select id="selectByCode" resultMap="BaseResultMap" >
+    select
+    *
+    from t_live
+    where state!='1'
+    and code = #{code}
+  </select>
+</mapper>

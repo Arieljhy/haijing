@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.ssms.dao.ClassfiyMapper" >
+    <resultMap id="BaseResultMap" type="cn.ssms.model.Classfiy" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <id column="name" property="name" jdbcType="VARCHAR" />
+        <id column="remark" property="remark" jdbcType="VARCHAR" />
+        <id column="state" property="state" jdbcType="INTEGER" />
+        <id column="sequence" property="sequence" jdbcType="INTEGER" />
+        <id column="type" property="type" jdbcType="INTEGER" />
+        <id column="add_person" property="addPerson" jdbcType="INTEGER" />
+        <id column="add_date" property="addDate" jdbcType="VARCHAR" />
+    </resultMap>
+ 	
+ 	<select id="getClassfiyByType" resultMap="BaseResultMap" parameterType="HashMap">
+ 		select * from t_classify where state=1
+ 		and type=#{type,jdbcType=INTEGER}
+ 		<if test="name != null and name !=''">
+ 			and name  like '%${name}%'
+ 		</if>
+ 		<if test="remark != null and remark != ''">
+ 			and remark like '%${remark}%'
+ 		</if>
+ 		<if test="state != null and state != ''">
+ 			and state = #{state,jdbcType=INTEGER}
+ 		</if>
+ 	</select>
+	<select id="getClassfiyByTypeList" resultMap="BaseResultMap" parameterType="HashMap">
+		select * from t_classify where state!=3
+		and type=#{type,jdbcType=INTEGER}
+		<if test="name != null and name !=''">
+			and name  like '%${name}%'
+		</if>
+		<if test="remark != null and remark != ''">
+			and remark like '%${remark}%'
+		</if>
+		<if test="state != null and state != ''">
+			and state = #{state,jdbcType=INTEGER}
+		</if>
+		<if test="beginNum != null and limitNum != null">
+			limit #{beginNum,jdbcType=INTEGER},#{limitNum,jdbcType=INTEGER}
+		</if>
+
+	</select>
+	<select id="getClassfiyByTypeCount" resultType="java.lang.Integer" parameterType="HashMap">
+
+		select count(1) from
+		(select * from t_classify where state!=3
+		and type=#{type,jdbcType=INTEGER}
+		<if test="name != null and name !=''">
+			and name like '%${name}%'
+		</if>
+		<if test="remark != null and remark != ''">
+			and remark like '%${remark}%'
+		</if>
+		<if test="state != null and state != ''">
+			and state = #{state,jdbcType=INTEGER}
+		</if>
+		)e
+
+	</select>
+ 	<insert id="addClassfiy" useGeneratedKeys="true" keyProperty="id" parameterType="cn.ssms.model.Classfiy">
+ 		insert into t_classify(name,remark,state,sequence,type,add_person,add_date)
+ 		values(#{name,jdbcType=VARCHAR},#{remark,jdbcType=VARCHAR},
+ 			#{state,jdbcType=INTEGER},#{sequence,jdbcType=INTEGER},
+ 			#{type,jdbcType=INTEGER},#{addPerson,jdbcType=INTEGER},now());
+ 	</insert>
+ 	
+ 	<update id="updClassfiy" parameterType="cn.ssms.model.Classfiy">
+ 		update t_classify
+ 		<set>
+ 			<if test="name != null">
+ 				name = #{name,jdbcType=VARCHAR},
+ 			</if>
+ 			<if test="remark != null and remark !=''">
+ 				remark = #{remark,jdbcType=VARCHAR},
+ 			</if>
+ 			<if test="state != null and state!=''">
+ 				state = #{state,jdbcType=INTEGER},
+ 			</if>
+ 			<if test="sequence != null and sequence!=''">
+ 				sequence = #{sequence,jdbcType=INTEGER}
+ 			</if>
+ 		</set>
+ 		where id = #{id,jdbcType=INTEGER}
+ 	</update>
+ 	
+ 	<select id="getClassfiyById" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+ 		select * from t_classify where id = #{id,jdbcType=INTEGER}
+ 	</select>
+	<select id="isReName" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+ 		select * from t_classify
+ 		where name = #{name,jdbcType=VARCHAR}
+ 		and type=#{type,jdbcType=INTEGER}
+		<if test="id != null and id!=''">
+			and id not in ( #{id,jdbcType=VARCHAR})
+		</if>
+ 		and state!=3
+ 	</select>
+
+	<select id="isReSequene" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select * from t_classify
+		where sequence = #{sequence,jdbcType=INTEGER}
+		and type=#{type,jdbcType=INTEGER}
+		<if test="id != null and id!=''">
+			and id not in ( #{id,jdbcType=VARCHAR})
+		</if>
+		and state!=3
+	</select>
+</mapper>

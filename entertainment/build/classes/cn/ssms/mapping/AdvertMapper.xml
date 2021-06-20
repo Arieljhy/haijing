@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.ssms.dao.AdvertMapper" >
+    <resultMap id="BaseResultMap" type="cn.ssms.model.Advert" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="title" property="title" jdbcType="VARCHAR" />
+        <result column="content" property="content" jdbcType="LONGVARCHAR" />
+        <result column="state" property="status" jdbcType="INTEGER" />
+        <result column="start_date" property="startDate" jdbcType="VARCHAR" />
+        <result column="add_date" property="addDate" jdbcType="VARCHAR" />
+        <result column="sort" property="sort" jdbcType="INTEGER" />
+        <result column="author" property="author" jdbcType="VARCHAR" />
+        <result column="classify_id" property="type" jdbcType="INTEGER" />
+        <result column="digest" property="abstracts" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, title, content, state, DATE_FORMAT(add_date,'%Y-%m-%d %H:%i:%s') as start_date, author, 
+        classify_id as type, digest as abstracts
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        a.id,a.title, a.content, a.state,DATE_FORMAT(a.add_date,'%Y-%m-%d %H:%i:%s') as start_date,
+        a.classify_id as type, a.digest as abstracts ,a.author
+        from t_infor a
+        where a.id = #{id,jdbcType=INTEGER} 
+    </select>
+
+    <insert id="insert" parameterType="cn.ssms.model.Advert" >
+        insert into t_infor (title, content, 
+            state, add_date, 
+            author, classify_id, 
+            digest)
+        values ( #{title,jdbcType=VARCHAR}, #{content,jdbcType=LONGVARCHAR}, 
+            1, now(), 
+            #{author,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, 
+            #{abstracts,jdbcType=VARCHAR})
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="cn.ssms.model.Advert" >
+        update t_infor
+        <set >
+            <if test="title != null" >
+                title = #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null" >
+                content = #{content,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="status != null" >
+                state = #{status,jdbcType=INTEGER},
+            </if>
+           
+            <if test="startDate != null" >
+                add_date = #{startDate,jdbcType=VARCHAR},
+            </if>
+<!--            <if test="startDate != null" >-->
+<!--                start_date = #{startDate,jdbcType=VARCHAR},-->
+<!--            </if>-->
+            
+            <if test="author != null" >
+                author = #{author,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null" >
+                classify_id = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="abstracts != null" >
+                digest = #{abstracts,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from t_infor
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    
+    <select id="selectAdvertByParams" parameterType="HashMap" resultMap="BaseResultMap">
+    	select 
+    	a.id,a.title, a.content, a.state,DATE_FORMAT(a.add_date,'%Y-%m-%d %H:%i:%s') as start_date,
+        a.author, a.classify_id as type, a.digest as abstracts ,a.author
+    	from t_infor a
+    	<where>
+    		a.state=1
+    		<if test="type != null and type != ''">
+    			and a.classify_id=#{type,jdbcType=INTEGER}
+    		</if>
+    		<if test="author !=null and author != ''">
+                and author like '%${author}%'
+    		</if>
+    		<if test="title != null and title != ''">
+    			and a.title like '%${title}%'
+    		</if>
+    		order by a.add_date desc
+    	</where>
+    	<if test="beginNum != null and limitNum != null">
+    		limit #{beginNum,jdbcType=INTEGER},#{limitNum,jdbcType=INTEGER}
+    	</if>
+    </select>
+    
+    <select id="countAdvertByParams" parameterType="HashMap" resultType="java.lang.Integer">
+    	select count(0) from t_infor 
+    	<where>
+    		state=1
+    		<if test="type != null and type != ''">
+    			and classify_id=#{type,jdbcType=INTEGER}
+    		</if>
+    		<if test="author !=null and author != ''">
+    			and author like '%${author}%'
+    		</if>
+    		<if test="title != null and title != ''">
+    			and title like '%${title}%'
+    		</if>
+            order by add_date desc
+    	</where>
+    </select>
+</mapper>

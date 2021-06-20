@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.ssms.dao.DicMapper" >
+    <resultMap id="BaseResultMap" type="cn.ssms.model.Dic" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="eng_type" property="engType" jdbcType="VARCHAR" />
+        <result column="type" property="type" jdbcType="INTEGER" />
+      	<result column="eng_name" property="engName" jdbcType="VARCHAR" />
+    	<result column="value" property="value" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id,eng_type,type,eng_name,value
+    </sql>
+
+    <select id="getAllRoleList" resultMap="BaseResultMap">
+    	SELECT id,role_name AS 'value',id AS type FROM t_role WHERE state = 1
+    </select>
+    
+     <select id="getRegion" resultMap="BaseResultMap" parameterType="HashMap">
+    	SELECT code as value ,fullName as eng_name FROM t_region WHERE parentCode =#{parentCode,jdbcType=VARCHAR}
+    </select>
+    
+     <select id="getRegionUser" resultMap="BaseResultMap" parameterType="HashMap">
+    	SELECT id ,user_name as value FROM t_admin WHERE type = 1 and status =1
+    </select>
+    
+     <select id="getDicByType" resultMap="BaseResultMap" parameterType="HashMap">
+    	SELECT id ,value,type,eng_name FROM t_dic WHERE eng_type = #{type,jdbcType=VARCHAR}
+    </select>
+    
+    <select id="getBankCodes" resultMap="BaseResultMap" parameterType="HashMap">
+    	SELECT bank_name as value,bank_code as eng_name FROM t_bank_code 
+    </select>
+    
+     <select id="getModalsList" resultMap="BaseResultMap">    	
+    	select son_type AS id,value from t_configure where type = 4 and status = 1   order by sort desc    	
+    </select>
+    
+    <select id="getCouponsList" resultMap="BaseResultMap">
+    	SELECT name AS value,id  FROM t_coupon WHERE state = 1
+    </select>
+</mapper>

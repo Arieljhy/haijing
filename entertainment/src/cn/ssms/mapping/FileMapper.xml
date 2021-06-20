@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.ssms.dao.FileMapper" >
+    <resultMap id="BaseResultMap" type="cn.ssms.model.File" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="file_type" property="fileType" jdbcType="INTEGER" />
+        <result column="category" property="category" jdbcType="INTEGER" />
+        <result column="type" property="type" jdbcType="INTEGER" />
+        <result column="video_region" property="videoRegion" jdbcType="INTEGER" />
+        <result column="video_year" property="videoYear" jdbcType="INTEGER" />
+        <result column="company" property="company" jdbcType="VARCHAR" />
+        <result column="author" property="author" jdbcType="VARCHAR" />
+        <result column="actor" property="actor" jdbcType="VARCHAR" />
+        <result column="introduction" property="introduction" jdbcType="VARCHAR" />
+        <result column="image" property="image" jdbcType="VARCHAR" />
+        <result column="play_count" property="playCount" jdbcType="INTEGER" />
+        <result column="state" property="state" jdbcType="INTEGER" />
+        <result column="add_person" property="addPerson" jdbcType="INTEGER" />
+        <result column="add_date" property="addDate" jdbcType="VARCHAR" />
+    </resultMap>
+
+  <!--   <sql id="Base_Column_List" >
+        id, name, file_type, category, type, video_region, video_year, company, author, actor, 
+        introduction, image, play_count, state, add_person, add_date
+    </sql>
+
+    <insert id="insert" parameterType="cn.ssms.model.File" >
+        insert into t_file (id, name, file_type, 
+            category, type, video_region, 
+            video_year, company, author, 
+            actor, introduction, image, 
+            play_count, state, add_person, 
+            add_date)
+        values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{fileType,jdbcType=INTEGER}, 
+            #{category,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, #{videoRegion,jdbcType=INTEGER}, 
+            #{videoYear,jdbcType=INTEGER}, #{company,jdbcType=VARCHAR}, #{author,jdbcType=VARCHAR}, 
+            #{actor,jdbcType=VARCHAR}, #{introduction,jdbcType=VARCHAR}, #{image,jdbcType=VARCHAR}, 
+            #{playCount,jdbcType=INTEGER}, #{state,jdbcType=INTEGER}, #{addPerson,jdbcType=INTEGER}, 
+            #{addDate,jdbcType=TIMESTAMP})
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="cn.ssms.model.File" >
+        update t_file
+        <set >
+            <if test="name != null" >
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="fileType != null" >
+                file_type = #{fileType,jdbcType=INTEGER},
+            </if>
+            <if test="category != null" >
+                category = #{category,jdbcType=INTEGER},
+            </if>
+            <if test="type != null" >
+                type = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="videoRegion != null" >
+                video_region = #{videoRegion,jdbcType=INTEGER},
+            </if>
+            <if test="videoYear != null" >
+                video_year = #{videoYear,jdbcType=INTEGER},
+            </if>
+            <if test="company != null" >
+                company = #{company,jdbcType=VARCHAR},
+            </if>
+            <if test="author != null" >
+                author = #{author,jdbcType=VARCHAR},
+            </if>
+            <if test="actor != null" >
+                actor = #{actor,jdbcType=VARCHAR},
+            </if>
+            <if test="introduction != null" >
+                introduction = #{introduction,jdbcType=VARCHAR},
+            </if>
+            <if test="image != null" >
+                image = #{image,jdbcType=VARCHAR},
+            </if>
+            <if test="playCount != null" >
+                play_count = #{playCount,jdbcType=INTEGER},
+            </if>
+            <if test="state != null" >
+                state = #{state,jdbcType=INTEGER},
+            </if>
+            <if test="addPerson != null" >
+                add_person = #{addPerson,jdbcType=INTEGER},
+            </if>
+            <if test="addDate != null" >
+                add_date = #{addDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from t_file
+        where id = #{id,jdbcType=INTEGER}
+    </delete> -->
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+		delete from t_file
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<select id="getFileByName" resultMap="BaseResultMap" flushCache="true">
+		select *
+		from t_file
+		where name = #{name,jdbcType=VARCHAR} and state!=0 and file_type=#{fileType,jdbcType=INTEGER} and category = #{categoryId} LIMIT 1
+	</select>
+
+
+    <select id="getResourceById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select id, name, file_type, category, type, video_region, video_year, company, author, actor, (SELECT t_admin.user_name FROM t_admin WHERE t_admin.id = t_file.add_person ) as userName,
+        introduction, image, play_count, state, add_person,DATE_FORMAT(add_date,'%Y-%m-%d %H:%i:%s') as add_date  
+        from t_file
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    
+    <select id="getResourceList" resultMap="BaseResultMap" parameterType="HashMap" >
+          select 
+        <choose>
+         <when test=" null == count or count == ''">
+         	 a.id, a.name, a.file_type, a.category, a.type, a.video_region, a.video_year,
+         	 (SELECT t_config.name FROM t_config WHERE t_config.id = a.category ) as categoryStr,
+         	 (SELECT t_config.name FROM t_config WHERE t_config.id = a.type ) as typeStr,
+         	 (SELECT t_config.name FROM t_config WHERE t_config.id = a.video_region ) as videoRegionStr,
+         	 (SELECT t_config.name FROM t_config WHERE t_config.id = a.video_year ) as videoYearStr,
+         	 (SELECT t_admin.user_name FROM t_admin WHERE t_admin.id = a.add_person ) as userName,
+         	 (SELECT COUNT(0) FROM t_resources WHERE t_resources.file_id = a.id AND t_resources.state = 1) as episodes ,
+      		 a.company , a.author, a.actor, a.introduction, a.image, a.play_count, a.state, 
+         	 a.add_person,DATE_FORMAT(a.add_date,'%Y-%m-%d %H:%i:%s') as add_date   
+         </when>
+         <otherwise>
+         	count(0) as count
+         </otherwise>
+        </choose>
+        from t_file a
+        where 1 = 1          
+        <if test="fileType != null and fileType != ''">
+    		and a.file_type=#{fileType,jdbcType=INTEGER}
+    	</if>   
+    	 <if test="category != null and category != ''">
+    		and a.category=#{category,jdbcType=INTEGER}
+    	</if> 
+    	<if test="state != null and state != ''">
+    		and a.state=#{state,jdbcType=INTEGER}
+    	</if>    	   
+    	 <if test=" null != name and name != ''">
+        	and a.name like CONCAT('%',#{name,jdbcType=VARCHAR},'%')
+        </if>	 
+        <if test="null == count or count == ''">  			
+			limit #{page, jdbcType=INTEGER} , #{pageSize, jdbcType=INTEGER}
+  		</if>  		
+    </select>
+    
+    <insert id="addResource"  useGeneratedKeys="true" keyProperty="id" parameterType="HashMap" >
+	    insert into t_file
+	    <trim prefix="(" suffix=")" suffixOverrides="," >
+	      <if test="id != null and id !=''" >
+	        id,
+	      </if>
+	      <if test="name != null and name !=''" >
+	        name,
+	      </if>
+	      <if test="fileType != null and fileType !=''" >
+	        file_type,
+	      </if>
+	      <if test="category != null and category !=''" >
+	        category,
+	      </if>
+	      <if test="type != null and type !=''" >
+	        type,
+	      </if>
+	      <if test="videoRegion != null and videoRegion !=''" >
+	        video_region,
+	      </if>
+	      <if test="videoYear != null and videoYear !=''" >
+	        video_year,
+	      </if>
+	      <if test="company != null and company !=''" >
+	        company,
+	      </if>
+	       <if test="author != null and author !=''" >
+	        author,
+	      </if>
+	      <if test="actor != null and actor !=''" >
+	        actor,
+	      </if>
+	      <if test="introduction != null and introduction !=''" >
+	        introduction,
+	      </if>
+	       <if test="image != null and image !=''" >
+	        image,
+	      </if>
+	       <if test="playCount != null and playCount !=''" >
+	        play_count,
+	      </if>
+	       <if test="state != null and state !=''" >
+	        state,
+	      </if>	      
+	       <if test="addPerson != null and addPerson !=''" >
+	        add_person,
+	      </if>	
+	       <if test="addDate != null and addDate !=''" >
+	        add_date,
+	      </if>	  	           
+	     </trim>	
+	    <trim prefix="values (" suffix=")" suffixOverrides="," >
+	       <if test="id != null and id !=''" >
+	        #{id,jdbcType=INTEGER},
+	      </if>
+	      <if test="name != null and name !=''" >
+	        #{name,jdbcType=VARCHAR},
+	      </if>
+	      <if test="fileType != null and fileType !=''" >
+	         #{fileType,jdbcType=INTEGER},
+	      </if>
+	      <if test="category != null and category !=''" >	        
+            #{category,jdbcType=INTEGER}, 
+	      </if>
+	      <if test="type != null and type !=''" >
+	        #{type,jdbcType=INTEGER}, 
+	      </if>
+	      <if test="videoRegion != null and videoRegion !=''" >
+	        #{videoRegion,jdbcType=INTEGER},
+	      </if>
+	      <if test="videoYear != null and videoYear !=''" >
+	        #{videoYear,jdbcType=INTEGER},
+	      </if>
+	      <if test="company != null and company !=''" >
+	        #{company,jdbcType=VARCHAR}, 
+	      </if>
+	       <if test="author != null and author !=''" >
+	        #{author,jdbcType=VARCHAR}, 
+	      </if>
+	       <if test="actor != null and actor !=''" >
+	        #{actor,jdbcType=VARCHAR}, 
+	      </if>
+	      <if test="introduction != null and introduction !=''" >
+	        #{introduction,jdbcType=VARCHAR}, 
+	      </if>
+	       <if test="image != null and image !=''" >
+	        #{image,jdbcType=VARCHAR},             
+	      </if>
+	       <if test="playCount != null and playCount !=''" >
+	        #{playCount,jdbcType=INTEGER},
+	      </if>
+	       <if test="state != null and state !=''" >
+	         #{state,jdbcType=INTEGER},
+	      </if>	      
+	       <if test="addPerson != null and addPerson !=''" >
+	        #{addPerson,jdbcType=INTEGER},           
+	      </if>	
+	       <if test="addDate != null and addDate !=''" >
+	         #{addDate,jdbcType=VARCHAR},
+	      </if>	  	  
+	    </trim>
+	  </insert>
+
+	<insert id="insert"  useGeneratedKeys="true" keyProperty="id" parameterType="cn.ssms.model.File" >
+		insert into t_file
+		<trim prefix="(" suffix=")" suffixOverrides="," >
+			<if test="id != null and id !=''" >
+				id,
+			</if>
+			<if test="name != null and name !=''" >
+				name,
+			</if>
+			<if test="fileType != null and fileType !=''" >
+				file_type,
+			</if>
+			<if test="category != null and category !=''" >
+				category,
+			</if>
+			<if test="type != null and type !=''" >
+				type,
+			</if>
+			<if test="videoRegion != null and videoRegion !=''" >
+				video_region,
+			</if>
+			<if test="videoYear != null and videoYear !=''" >
+				video_year,
+			</if>
+			<if test="company != null and company !=''" >
+				company,
+			</if>
+			<if test="author != null and author !=''" >
+				author,
+			</if>
+			<if test="actor != null and actor !=''" >
+				actor,
+			</if>
+			<if test="introduction != null and introduction !=''" >
+				introduction,
+			</if>
+			<if test="image != null and image !=''" >
+				image,
+			</if>
+			<if test="playCount != null and playCount !=''" >
+				play_count,
+			</if>
+			<if test="state != null and state !=''" >
+				state,
+			</if>
+			<if test="addPerson != null and addPerson !=''" >
+				add_person,
+			</if>
+			<if test="addDate != null and addDate !=''" >
+				add_date,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides="," >
+			<if test="id != null and id !=''" >
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="name != null and name !=''" >
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="fileType != null and fileType !=''" >
+				#{fileType,jdbcType=INTEGER},
+			</if>
+			<if test="category != null and category !=''" >
+				#{category,jdbcType=INTEGER},
+			</if>
+			<if test="type != null and type !=''" >
+				#{type,jdbcType=INTEGER},
+			</if>
+			<if test="videoRegion != null and videoRegion !=''" >
+				#{videoRegion,jdbcType=INTEGER},
+			</if>
+			<if test="videoYear != null and videoYear !=''" >
+				#{videoYear,jdbcType=INTEGER},
+			</if>
+			<if test="company != null and company !=''" >
+				#{company,jdbcType=VARCHAR},
+			</if>
+			<if test="author != null and author !=''" >
+				#{author,jdbcType=VARCHAR},
+			</if>
+			<if test="actor != null and actor !=''" >
+				#{actor,jdbcType=VARCHAR},
+			</if>
+			<if test="introduction != null and introduction !=''" >
+				#{introduction,jdbcType=VARCHAR},
+			</if>
+			<if test="image != null and image !=''" >
+				#{image,jdbcType=VARCHAR},
+			</if>
+			<if test="playCount != null and playCount !=''" >
+				#{playCount,jdbcType=INTEGER},
+			</if>
+			<if test="state != null and state !=''" >
+				#{state,jdbcType=INTEGER},
+			</if>
+			<if test="addPerson != null and addPerson !=''" >
+				#{addPerson,jdbcType=INTEGER},
+			</if>
+			<if test="addDate != null and addDate !=''" >
+				#{addDate,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+
+
+
+	<update id="updateResource" parameterType="HashMap" >
+        update t_file
+        <set >
+            <if test="name != null and name !=''" >
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="fileType != null and fileType !=''" >
+                file_type = #{fileType,jdbcType=INTEGER},
+            </if>
+            <if test="category != null and category !=''" >
+                category = #{category,jdbcType=INTEGER},
+            </if>
+            <if test="type != null and type !=''" >
+                type = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="videoRegion != null and videoRegion !=''" >
+                video_region = #{videoRegion,jdbcType=INTEGER},
+            </if>
+            <if test="videoYear != null and videoYear !=''" >
+                video_year = #{videoYear,jdbcType=INTEGER},
+            </if>
+            <if test="company != null and company !=''" >
+                company = #{company,jdbcType=VARCHAR},
+            </if>
+            <if test="author != null and author !=''" >
+                author = #{author,jdbcType=VARCHAR},
+            </if>
+            <if test="actor != null and actor !=''" >
+                actor = #{actor,jdbcType=VARCHAR},
+            </if>
+            <if test="introduction != null and introduction !=''" >
+                introduction = #{introduction,jdbcType=VARCHAR},
+            </if>
+            <if test="image != null and image !=''" >
+                image = #{image,jdbcType=VARCHAR},
+            </if>
+            <if test="playCount != null" >
+                play_count = #{playCount,jdbcType=INTEGER},
+            </if>
+            <if test="state != null" >
+                state = #{state,jdbcType=INTEGER},
+            </if>
+            <if test="addPerson != null and addPerson !=''" >
+                add_person = #{addPerson,jdbcType=INTEGER},
+            </if>
+            <if test="addDate != null and addDate !=''" >
+                add_date = #{addDate,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+
+
+	<update id="update" parameterType="cn.ssms.model.File" >
+		update t_file
+		<set >
+			<if test="name != null and name !=''" >
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="fileType != null and fileType !=''" >
+				file_type = #{fileType,jdbcType=INTEGER},
+			</if>
+			<if test="category != null and category !=''" >
+				category = #{category,jdbcType=INTEGER},
+			</if>
+			<if test="type != null and type !=''" >
+				type = #{type,jdbcType=INTEGER},
+			</if>
+			<if test="videoRegion != null and videoRegion !=''" >
+				video_region = #{videoRegion,jdbcType=INTEGER},
+			</if>
+			<if test="videoYear != null and videoYear !=''" >
+				video_year = #{videoYear,jdbcType=INTEGER},
+			</if>
+			<if test="company != null and company !=''" >
+				company = #{company,jdbcType=VARCHAR},
+			</if>
+			<if test="author != null and author !=''" >
+				author = #{author,jdbcType=VARCHAR},
+			</if>
+			<if test="actor != null and actor !=''" >
+				actor = #{actor,jdbcType=VARCHAR},
+			</if>
+			<if test="introduction != null and introduction !=''" >
+				introduction = #{introduction,jdbcType=VARCHAR},
+			</if>
+			<if test="image != null and image !=''" >
+				image = #{image,jdbcType=VARCHAR},
+			</if>
+			<if test="playCount != null" >
+				play_count = #{playCount,jdbcType=INTEGER},
+			</if>
+			<if test="state != null" >
+				state = #{state,jdbcType=INTEGER},
+			</if>
+			<if test="addPerson != null and addPerson !=''" >
+				add_person = #{addPerson,jdbcType=INTEGER},
+			</if>
+			<if test="addDate != null and addDate !=''" >
+				add_date = #{addDate,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+
+	<select id="getFileByConfigId" parameterType="HashMap" resultMap="BaseResultMap" >
+		SELECT *  from t_file
+		where (category=#{configId}
+		or type=#{configId} or video_region=#{configId} or video_year=#{configId})
+		and state=1
+	</select>
+    <delete id="deleteByCatId">
+		DELETE t_file,t_resources FROM t_file ,t_resources  WHERE t_file.id=t_resources.file_id and t_file.category=#{id}
+	</delete>
+	<select id="getNotExistFile" resultMap="BaseResultMap">
+		select * from t_file f
+		where category = #{categoryId}
+		and f.name not in
+		<foreach collection="fileNames" item="fileName" separator="," open="(" close=")">
+			#{fileName}
+		</foreach>
+	</select>
+	<delete id="deleteByFileId">
+		DELETE FROM t_file where id=#{id}
+	</delete>
+	<delete id="deleteByResourceByFileId">
+		DELETE   FROM t_resources where  file_id=#{id}
+	</delete>
+</mapper>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.ssms.dao.ForumMapper" >
+    <resultMap id="BaseResultMap" type="cn.ssms.model.Forum" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="title" property="title" jdbcType="VARCHAR" />
+        <result column="content" property="content" jdbcType="VARCHAR" />
+        <result column="image_list" property="imageList" jdbcType="VARCHAR" />
+        <result column="floor_name" property="floorName" jdbcType="VARCHAR" />
+        <result column="classify_id" property="classifyId" jdbcType="INTEGER" />
+        <result column="bbs_id" property="bbsId" jdbcType="INTEGER" />
+        <result column="type" property="type" jdbcType="INTEGER" />
+        <result column="state" property="state" jdbcType="INTEGER" />
+        <result column="add_person" property="addPerson" jdbcType="INTEGER" />
+        <result column="add_date" property="addDate" jdbcType="TIMESTAMP" />
+        <result column="del_date" property="delDate" jdbcType="TIMESTAMP" />
+        <result column="reply_count" property="replyCount" jdbcType="INTEGER" />
+        <result column="click_count" property="clickCount" jdbcType="INTEGER" />
+        <result column=" renew_date" property="renewDate" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, title, content, image_list, floor_name, classify_id, bbs_id, type, state, add_person, 
+        add_date, del_date, reply_count, click_count, " renew_date"
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from t_bbs
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <insert id="insert" parameterType="cn.ssms.model.Forum" >
+        insert into t_bbs (id, title, content, 
+            image_list, floor_name, classify_id, 
+            bbs_id, type, state, 
+            add_person, add_date, del_date, 
+            reply_count, click_count, " renew_date"
+            )
+        values (#{id,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, 
+            #{imageList,jdbcType=VARCHAR}, #{floorName,jdbcType=VARCHAR}, #{classifyId,jdbcType=INTEGER}, 
+            #{bbsId,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, #{state,jdbcType=INTEGER}, 
+            #{addPerson,jdbcType=INTEGER}, #{addDate,jdbcType=TIMESTAMP}, #{delDate,jdbcType=TIMESTAMP}, 
+            #{replyCount,jdbcType=INTEGER}, #{clickCount,jdbcType=INTEGER}, #{renewDate,jdbcType=TIMESTAMP}
+            )
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="cn.ssms.model.Forum" >
+        update t_bbs
+        <set >
+            <if test="title != null" >
+                title = #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null" >
+                content = #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="imageList != null" >
+                image_list = #{imageList,jdbcType=VARCHAR},
+            </if>
+            <if test="floorName != null" >
+                floor_name = #{floorName,jdbcType=VARCHAR},
+            </if>
+            <if test="classifyId != null" >
+                classify_id = #{classifyId,jdbcType=INTEGER},
+            </if>
+            <if test="bbsId != null" >
+                bbs_id = #{bbsId,jdbcType=INTEGER},
+            </if>
+            <if test="type != null" >
+                type = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="state != null" >
+                state = #{state,jdbcType=INTEGER},
+            </if>
+            <if test="addPerson != null" >
+                add_person = #{addPerson,jdbcType=INTEGER},
+            </if>
+            <if test="addDate != null" >
+                add_date = #{addDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="delDate != null" >
+                del_date = #{delDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="replyCount != null" >
+                reply_count = #{replyCount,jdbcType=INTEGER},
+            </if>
+            <if test="clickCount != null" >
+                click_count = #{clickCount,jdbcType=INTEGER},
+            </if>
+            <if test="renewDate != null" >
+                " renew_date" = #{renewDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from t_bbs
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+</mapper>

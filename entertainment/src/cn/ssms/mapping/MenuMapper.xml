@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.ssms.dao.MenuMapper" >
+    <resultMap id="BaseResultMap" type="cn.ssms.model.Menu" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="menu_name" property="menuName" jdbcType="VARCHAR" />
+        <result column="parent_menu_id" property="parentMenuId" jdbcType="INTEGER" />
+        <result column="url" property="url" jdbcType="LONGVARCHAR" />
+        <result column="iconcls" property="iconcls" jdbcType="VARCHAR" />
+        <result column="privilege_id" property="privilegeId" jdbcType="INTEGER" />
+        <result column="menu_state" property="menuState" jdbcType="INTEGER" />
+        <result column="add_date" property="addDate" jdbcType="TIMESTAMP" />
+        <result column="son_menu" property="sonMenu" jdbcType="VARCHAR" />
+        <result column="author_list" property="authorList" jdbcType="VARCHAR" />
+    </resultMap>
+
+	<sql id="Base_Column_List" >
+        id, menu_name, parent_menu_id, url, iconcls, privilege_id, menu_state, add_date
+    </sql>
+    <!--   
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from t_menu
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <update id="updateByPrimaryKeySelective" parameterType="cn.ssms.model.Menu" >
+        update t_menu
+        <set >
+            <if test="menuName != null" >
+                menu_name = #{menuName,jdbcType=VARCHAR},
+            </if>
+            <if test="parentMenuId != null" >
+                parent_menu_id = #{parentMenuId,jdbcType=INTEGER},
+            </if>
+            <if test="url != null" >
+                url = #{url,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="iconcls != null" >
+                iconcls = #{iconcls,jdbcType=VARCHAR},
+            </if>
+            <if test="privilegeId != null" >
+                privilege_id = #{privilegeId,jdbcType=INTEGER},
+            </if>
+            <if test="menuState != null" >
+                menu_state = #{menuState,jdbcType=INTEGER},
+            </if>
+            <if test="addDate != null" >
+                add_date = #{addDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from t_menu
+        where id = #{id,jdbcType=INTEGER}
+    </delete> -->
+
+	<insert id="addMenu" parameterType="cn.ssms.model.Menu" >
+        insert into t_menu (id, menu_name, parent_menu_id, 
+            url, iconcls, privilege_id, 
+            menu_state, add_date)
+        values (#{id,jdbcType=INTEGER}, #{menuName,jdbcType=VARCHAR}, #{parentMenuId,jdbcType=INTEGER}, 
+            #{url,jdbcType=LONGVARCHAR}, #{iconcls,jdbcType=VARCHAR}, #{privilegeId,jdbcType=INTEGER}, 
+            #{menuState,jdbcType=INTEGER}, #{addDate,jdbcType=TIMESTAMP})
+    </insert>
+    
+	 <select id="getMenuListUserCode" resultMap="BaseResultMap" parameterType="java.lang.String" >
+		SELECT DISTINCT
+			(t_menu.id) id,
+			menu_name,
+			parent_menu_id,
+			url,
+			iconcls,
+			menu_state,
+			author_list
+		FROM
+			t_admin,
+			t_role,
+			t_author,
+			t_admin_role,
+			t_menu
+		WHERE
+		t_role.id = t_admin_role.role_id 
+		and t_admin.id = t_admin_role.admin_id
+		AND t_author.role_id = t_admin_role.role_id
+		AND t_menu.id = resource_id
+		and t_role.state='1'	
+		and t_admin.status > 0
+		and t_menu.menu_state = 1
+		AND t_admin.user_code =  #{userCode,jdbcType=VARCHAR}
+		ORDER BY
+			t_menu.id;
+	  </select>
+	  
+	 <select id="getMenuByRoleId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+  		SELECT
+			a.*,b.author_list
+		FROM
+			t_menu a,
+			t_author b
+		WHERE
+			a.id = b.resource_id	
+		AND b.role_id = #{roleId,jdbcType=INTEGER}
+ 	 </select>
+ 	 
+ 	 <select id="getMenuList" resultMap="BaseResultMap">
+ 	 	SELECT a.*,GROUP_CONCAT(b.menu_name) as son_menu
+		FROM t_menu a
+		LEFT JOIN t_menu b ON a.id=b.parent_menu_id
+		WHERE a.parent_menu_id=0
+		GROUP BY a.id
+ 	 </select>
+ 	 
+ 	 <select id="getSonMenuList" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+ 	 	SELECT
+			*
+		FROM
+			t_menu
+		WHERE
+			parent_menu_id=#{parentId,jdbcType=INTEGER}
+ 	 </select>
+ 	 
+ 	   <select id="selectAllMenu" resultMap="BaseResultMap">
+    	select 
+        <include refid="Base_Column_List" />
+        from t_menu
+        where menu_state = 1
+    </select>
+	<!--根据id查询菜单-->
+	<select id="getMenuById" parameterType="integer" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_menu
+		where menu_state = 1
+		and id=#{id,jdbcType=INTEGER}
+	</select>
+	<!--更新代码信息-->
+	<update id="updateByPrimaryKeySelective" parameterType="cn.ssms.model.Menu" >
+		update t_menu
+		<set >
+			<if test="menuName != null" >
+				menu_name = #{menuName,jdbcType=VARCHAR},
+			</if>
+			<if test="parentMenuId != null" >
+				parent_menu_id = #{parentMenuId,jdbcType=INTEGER},
+			</if>
+			<if test="url != null" >
+				url = #{url,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="iconcls != null" >
+				iconcls = #{iconcls,jdbcType=VARCHAR},
+			</if>
+			<if test="privilegeId != null" >
+				privilege_id = #{privilegeId,jdbcType=INTEGER},
+			</if>
+			<if test="menuState != null" >
+				menu_state = #{menuState,jdbcType=INTEGER},
+			</if>
+			<if test="addDate != null" >
+				add_date = #{addDate,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

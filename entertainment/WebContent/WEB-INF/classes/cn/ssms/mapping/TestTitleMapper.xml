@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.ssms.dao.TestTitleMapper" >
+	<resultMap type="cn.ssms.model.TestTitle" id="BaseResultMap">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<id column="mainId" property="mainId" jdbcType="INTEGER" />
+		<id column="title" property="title" jdbcType="VARCHAR" />
+		<id column="remark" property="remark" jdbcType="VARCHAR" />
+		<id	column="sequence"	property="sequence"	jdbcType="INTEGER"/>
+		<id column="trueAnser" property="trueAnser" jdbcType="VARCHAR" />
+		<id column="type" property="type" jdbcType="INTEGER" />
+		<id column="status" property="status" jdbcType="INTEGER" />
+		<id column="add_date" property="addDate" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap type="cn.ssms.model.Anser" id="AnserMap">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<id column="titleId" property="titleId" jdbcType="INTEGER" />
+		<id column="content" property="content" jdbcType="VARCHAR" />
+		<id column="remark" property="remark" jdbcType="VARCHAR" />
+		<id column="type" property="type" jdbcType="INTEGER" />
+		<id column="status" property="status" jdbcType="INTEGER" />
+		<id column="add_date" property="addDate" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap type="cn.ssms.model.UserAnser" id="UserAnserMap">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<id column="userId" property="userId" jdbcType="INTEGER" />
+		<id column="testId" property="testId" jdbcType="INTEGER" />
+		<id column="titleId" property="titleId" jdbcType="INTEGER" />
+		<id column="title" property="title" jdbcType="VARCHAR" />
+		<id	column="sequence"	property="sequence"	jdbcType="INTEGER"/>
+		<id column="anserIds" property="anserIds" jdbcType="VARCHAR" />
+		<id column="score" property="score" jdbcType="INTEGER" />
+	</resultMap>
+	
+	<resultMap type="cn.ssms.model.Result" id="ResultMap">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<id column="userId" property="userId" jdbcType="INTEGER" />
+		<id column="testId" property="testId" jdbcType="INTEGER" />
+		<id column="trueCount" property="trueCount" jdbcType="INTEGER" />
+		<id column="totalCount" property="totalCount" jdbcType="INTEGER" />
+		<id column="errorCount" property="errorCount" jdbcType="INTEGER" />
+		<id column="score" property="score" jdbcType="INTEGER" />
+		<id column="status" property="status" jdbcType="INTEGER" />
+		<id column="add_date" property="addDate" jdbcType="VARCHAR" />
+		<id	column="resultAnalyse"	property="resultAnalyse"	jdbcType="VARCHAR"/>
+		<id	column="userName"	property="userName"	jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<select id="getTestTitleList"	resultMap="BaseResultMap"	parameterType="HashMap">
+		select	*	
+		from	t_test_title
+		where status=1 
+ 		and mainId=#{mainId,jdbcType=INTEGER}
+ 		limit #{page,jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
+	</select>
+	
+	<select id="getTestTitleListCount"	resultType="int"	parameterType="HashMap">
+		select	count(0)
+		from	t_test_title
+		where status=1 
+ 		and mainId=#{mainId,jdbcType=INTEGER}
+ 		
+	</select>
+
+
+    <select id="getTestTitleDetail"	resultMap="BaseResultMap"	parameterType="HashMap">
+		select	*
+		from	t_test_title
+		where    id=#{id,jdbcType=INTEGER}
+	</select>
+
+	
+	<!-- <insert id="addTitle"	parameterType="cn.ssms.model.TestTitle">
+		insert	into	t_test_title(mainId,title,remark,
+						trueAnser,type,status,add_date)
+		values(#{mainId,jdbcType=INTEGER},#{testId,jdbcType=INTEGER},
+				#{title,jdbcType=VARCHAR},
+			 #{remark,jdbcType=VARCHAR}, #{trueAnser,jdbcType=VARCHAR},
+			 #{type,jdbcType=INTEGER},#{status,jdbcType=INTEGER},now())
+	</insert> -->
+	
+	
+		
+	<select id="getAnserList"	resultMap="AnserMap"	parameterType="java.lang.Integer">
+		select	*	
+		from	t_anser
+		where	status=1
+		and		titleId=#{titleId,jdbcType=INTEGER}	
+	</select>
+	
+	
+	<insert id="addUserAnser"	parameterType="cn.ssms.model.UserAnser">
+		insert	into	t_user_anser(userId,testId,titleId,anserIds,score)
+		values(#{userId,jdbcType=INTEGER},#{testId,jdbcType=INTEGER},
+		#{titleId,jdbcType=INTEGER},
+		#{anserIds,jdbcType=VARCHAR},#{score,jdbcType=INTEGER})
+	</insert>
+	
+	<select id="getUserAnserList"	parameterType="HashMap"	resultMap="UserAnserMap">
+		SELECT	DISTINCT	tu.id,tu.anserIds,tu.score,tu.testId,tu.titleId,
+				tu.userId,tt.title,tt.sequence,m.type
+		FROM	t_user_anser	tu,t_test_title	tt ,t_main_test m
+		WHERE	tu.titleId=tt.id
+		AND m.id=tt.mainId
+		AND	tt.`status`=1
+		AND	tu.testId=#{mainId,jdbcType=INTEGER}	
+		and	tu.userId=#{userId,jdbcType=INTEGER}
+		ORDER BY	tt.sequence
+		limit #{page,jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
+	</select>
+	
+	<select id="getUserAnserListTotal"	parameterType="HashMap"	resultType="int">
+		SELECT	count(0)
+		FROM	t_user_anser	tu,t_test_title	tt
+		WHERE	tu.titleId=tt.id
+		AND	tt.`status`=1
+		AND	tu.testId=#{mainId,jdbcType=INTEGER}	
+		and	tu.userId=#{userId,jdbcType=INTEGER}
+	</select>
+	
+	<select id="getResultScore"	parameterType="HashMap"	resultType="java.lang.String">
+		SELECT	SUM(t.score)	as	score
+		FROM	t_user_anser	t
+		WHERE	t.testId=#{mainId,jdbcType=INTEGER}	and	t.userId=#{userId,jdbcType=INTEGER}
+		GROUP BY	t.testId=#{mainId,jdbcType=INTEGER}
+	</select>
+	
+	
+	<insert id="addResult"	parameterType="cn.ssms.model.Result">
+		insert	into	t_result(userId,testId,trueCount,totalCount,
+					errorCount,score,status,add_date)
+		values(#{userId,jdbcType=INTEGER},#{testId,jdbcType=INTEGER},
+		#{trueCount,jdbcType=INTEGER},#{totalCount,jdbcType=INTEGER},
+		#{errorCount,jdbcType=INTEGER},
+		#{score,jdbcType=INTEGER},#{status,jdbcType=INTEGER},now())		
+	</insert>
+	
+	
+	
+	<select id="getResult"	parameterType="HashMap"	resultType="cn.ssms.model.Result">
+		SELECT	*,(SELECT	m.resultAnalyse	FROM	t_main_test	m	WHERE	m.id=#{mainId,jdbcType=INTEGER}	)  AS	resultAnalyse	
+		FROM	t_result	t
+		WHERE	t.status=1
+		and	t.testId=#{mainId,jdbcType=INTEGER}	and	t.userId=#{userId,jdbcType=INTEGER}
+	</select>
+	
+	<select id="getTitleDetail"	parameterType="HashMap"	resultType="cn.ssms.model.UserAnser">
+		SELECT	tu.id,tu.anserIds,tu.score,tu.testId,tu.titleId,tt.trueAnser,
+				tu.userId,tt.title,tt.sequence
+		FROM	t_user_anser	tu,t_test_title	tt
+		WHERE	tu.titleId=tt.id
+		AND	tt.`status`=1
+		and	tu.userId=#{userId,jdbcType=INTEGER}
+		AND	tu.titleId=#{titleId,jdbcType=INTEGER}
+	</select>
+
+	<select id="getReplyList"	parameterType="HashMap"		resultMap="ResultMap">
+		SELECT	*,(SELECT	m.resultAnalyse	FROM	t_main_test	m	WHERE	m.id=t.testId	)  AS	resultAnalyse,
+		(SELECT	u.`name`	FROM	t_user	u	WHERE	u.id=t.userId)	AS	userName,
+		(SELECT	m.title	FROM	t_main_test	m	WHERE	m.id=t.testId	)AS	title
+		FROM	t_result	t
+		WHERE	t.`status`=1
+		and	t.testId=#{mainId,jdbcType=INTEGER}
+		ORDER BY	t.score	DESC
+		<if test="page!=null and page!='' and pageSize!=null and pageSize!=''">
+			limit #{page,jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
+		</if>
+	</select>
+
+	<select id="getReplyListTotal"	parameterType="HashMap"		resultType="int">
+		SELECT	count(0)
+		FROM	t_result	t
+		WHERE	t.`status`=1
+		and	t.testId=#{mainId,jdbcType=INTEGER}
+	</select>
+
+
+	<select id="getSequenceCount"	resultType="int">
+		SELECT	count(0)
+		FROM	t_test_title	t
+		WHERE	t.mainId=#{mainId,jdbcType=INTEGER}
+	</select>
+	
+	<insert id="addTitle"	parameterType="cn.ssms.model.TestTitle"	useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO `entertainment_new`.`t_test_title` ( `mainId`, `title`, `remark`, 
+		`sequence`, `trueAnser`, `type`, `status`, `add_date`) 	
+		values(#{mainId,jdbcType=INTEGER},#{title,jdbcType=VARCHAR},
+			#{remark,jdbcType=VARCHAR},#{sequence,jdbcType=INTEGER},
+			#{trueAnser,jdbcType=VARCHAR},#{type,jdbcType=INTEGER},
+ 			#{status,jdbcType=INTEGER},now())
+	</insert>
+	
+	<insert id="addAnser"	parameterType="cn.ssms.model.Anser"	useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO `entertainment_new`.`t_anser` ( `titleId`, 
+		`content`, `remark`, `score`, `status`, `add_date`)
+		 VALUES(#{titleId,jdbcType=INTEGER},#{content,jdbcType=VARCHAR},
+		 #{remark,jdbcType=VARCHAR},#{score,jdbcType=INTEGER},
+		 #{status,jdbcType=INTEGER},now())
+	</insert>
+	<insert id="addAnserList"	parameterType="ArrayList">
+		INSERT INTO `entertainment_new`.`t_anser` ( `titleId`, 
+		`content`, `remark`, `score`, `status`, `add_date`)
+		 VALUES
+		 <foreach collection="list"	item="obj" index="index"	separator="," >
+ 			(#{obj.titleId,jdbcType=INTEGER},#{obj.content,jdbcType=VARCHAR},
+       #{obj.remark,jdbcType=VARCHAR},#{obj.score,jdbcType=INTEGER},
+       #{obj.status,jdbcType=INTEGER},now())
+ 		</foreach>
+	
+	</insert>
+
+	<update id="removeTitle">
+		update   t_test_title set status=0
+		where mainId=#{mainId} AND id=#{id}
+	</update>
+
+	<update id="updateTestTitle" parameterType="cn.ssms.model.TestTitle" >
+		update t_test_title
+		<set >
+			<if test="title != null and title !=''" >
+				title = #{title,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null and remark !=''" >
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="sequence != null and sequence !=''" >
+				sequence = #{sequence,jdbcType=INTEGER},
+			</if>
+			<if test="trueAnser != null and trueAnser !=''" >
+				trueAnser = #{trueAnser,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null and type !=''" >
+				type = #{type,jdbcType=INTEGER},
+			</if>
+			<if test="status != null and status !=''" >
+				status = #{status,jdbcType=INTEGER},
+			</if>
+			<if test="addDate != null and addDate !=''" >
+				add_date = #{addDate,jdbcType=VARCHAR},
+			</if>
+		</set>
+		<where>
+			<if test="mainId != null and mainId != ''">
+				AND mainId = #{mainId}
+			</if>
+			<if test="id != null and id != ''">
+				AND id = #{id}
+			</if>
+		</where>
+	</update>
+
+	<update id="updateBatchAnser" parameterType="java.util.List" >
+		<foreach collection="list" item="item" index="index" open="" close="" separator=";">
+			update t_anser
+			<set >
+				<if test="item.content != null" >
+					content = #{item.content,jdbcType=VARCHAR},
+				</if>
+				<if test="item.remark != null" >
+					remark = #{item.remark,jdbcType=VARCHAR},
+				</if>
+				<if test="item.score != null" >
+					score = #{item.score,jdbcType=INTEGER},
+				</if>
+				<if test="item.status != null" >
+					status = #{item.status,jdbcType=INTEGER},
+				</if>
+				<if test="item.addDate != null" >
+					add_date = #{item.addDate,jdbcType=VARCHAR},
+				</if>
+			</set>
+			where id = #{item.id,jdbcType=BIGINT} AND titleId=#{item.titleId,jdbcType=BIGINT}
+		</foreach>
+	</update>
+</mapper> 

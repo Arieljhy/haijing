@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.ssms.dao.CommentsMapper" >
+    <resultMap id="BaseResultMap" type="cn.ssms.model.Comments" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="foreign_id" property="foreignId" jdbcType="INTEGER" />
+        <result column="type" property="type" jdbcType="INTEGER" />
+        <result column="content" property="content" jdbcType="VARCHAR" />
+        <result column="critics" property="critics" jdbcType="INTEGER" />
+        <result column="state" property="state" jdbcType="INTEGER" />
+        <result column="add_date" property="addDate" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, foreign_id, type, content, critics, state, add_date
+    </sql>
+
+  <!--   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from t_comments
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <insert id="insert" parameterType="cn.ssms.model.Comments" >
+        insert into t_comments (id, foreign_id, type, 
+            content, critics, state, 
+            add_date)
+        values (#{id,jdbcType=INTEGER}, #{foreignId,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, 
+            #{content,jdbcType=VARCHAR}, #{critics,jdbcType=INTEGER}, #{state,jdbcType=INTEGER}, 
+            #{addDate,jdbcType=TIMESTAMP})
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="cn.ssms.model.Comments" >
+        update t_comments
+        <set >
+            <if test="foreignId != null" >
+                foreign_id = #{foreignId,jdbcType=INTEGER},
+            </if>
+            <if test="type != null" >
+                type = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="content != null" >
+                content = #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="critics != null" >
+                critics = #{critics,jdbcType=INTEGER},
+            </if>
+            <if test="state != null" >
+                state = #{state,jdbcType=INTEGER},
+            </if>
+            <if test="addDate != null" >
+                add_date = #{addDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from t_comments
+        where id = #{id,jdbcType=INTEGER}
+    </delete> -->
+
+    <insert id="insertComments" parameterType="HashMap" >
+        insert into t_comments (foreign_id, type, 
+            content, critics, state, 
+            add_date)
+        values (#{foreignId,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, 
+            #{content,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{state,jdbcType=INTEGER}, 
+            now())
+    </insert>
+
+	<select id="getComments" parameterType="HashMap" resultType="HashMap">
+			SELECT
+				comments.id,
+				content,
+				USER .id userId,
+				`user`. name,
+				USER .head_image headImage
+			
+			FROM
+				t_comments comments
+			LEFT JOIN t_user USER ON comments.critics = USER .id
+			where comments.state=1 and comments.type=#{type} and foreign_id=#{id}
+	</select>
+	
+	<update id="deleteCommentsById" parameterType="Integer" >
+		update t_comments 
+			set state=2
+		where id=#{id} 
+	</update>
+
+
+	<select id="getCommentsClassify" parameterType="HashMap" resultType="HashMap" >
+					/*影视管理*/
+				<if test="classifyId !=NULL and classifyId==999">
+				SELECT
+						a.id,
+						DATE_FORMAT(a.add_date, '%Y-%m-%d') addDate,
+						b.user_name addName,
+						a.NAME title,
+						
+					 case a.file_type
+						when 1 then "影视管理"
+						when 2 then "音乐管理"
+						when 3 then "书籍管理"
+						else "未知模块"  
+					   end as classifyName,
+					   "1" type
+					FROM
+						t_file a
+					LEFT JOIN t_admin b ON a.add_person = b.id 
+					where a.state =1 and  a.file_type !=4
+					and a.file_type=1
+				</if>
+				/*音乐管理*/
+				<if test="classifyId !=NULL and classifyId==9999">
+							SELECT
+						a.id,
+						DATE_FORMAT(a.add_date, '%Y-%m-%d') addDate,
+						b.user_name addName,
+						a.NAME title,
+						
+					 case a.file_type
+						when 1 then "影视管理"
+						when 2 then "音乐管理"
+						when 3 then "书籍管理"
+						else "未知模块"  
+					   end as classifyName,
+					   "1" type
+					FROM
+						t_file a
+					LEFT JOIN t_admin b ON a.add_person = b.id 
+					where a.state =1 and  a.file_type !=4
+					and a.file_type=2
+				</if>
+				/*书籍管理*/
+				<if test="classifyId !=NULL and classifyId==99999">
+							SELECT
+						a.id,
+						DATE_FORMAT(a.add_date, '%Y-%m-%d') addDate,
+						b.user_name addName,
+						a.NAME title,
+						
+					 case a.file_type
+						when 1 then "影视管理"
+						when 2 then "音乐管理"
+						when 3 then "书籍管理"
+						else "未知模块"  
+					   end as classifyName,
+					   "1" type
+					FROM
+						t_file a
+					LEFT JOIN t_admin b ON a.add_person = b.id 
+					where a.state =1 and  a.file_type !=4
+					and a.file_type=3
+				</if>
+				
+				<if test="classifyId ==NULL ">
+					SELECT
+						a.id,
+						DATE_FORMAT(a.add_date, '%Y-%m-%d') addDate,
+						b.user_name addName,
+						a.NAME title,
+						
+					 case a.file_type
+						when 1 then "影视管理"
+						when 2 then "音乐管理"
+						when 3 then "书籍管理"
+						else "未知模块"  
+					   end as classifyName,
+					   "1" type
+					FROM
+						t_file a
+					LEFT JOIN t_admin b ON a.add_person = b.id 
+					where a.state =1 and  a.file_type !=4
+						UNION
+				</if>
+			
+	<if test="classifyId !=NULL and classifyId!=999 and classifyId!=9999 and classifyId!=99999">
+		
+		SELECT
+			a.id,
+			DATE_FORMAT(a.add_date, '%Y-%m-%d') addDate,
+			b.user_name addName,
+			a.title title,
+			 c.name classifyName,
+			 "2" type
+		FROM
+			t_infor a
+		LEFT JOIN t_admin b ON a.add_person = b.id 
+		left JOIN t_classify c on a.classify_id =c.id
+		where a.state =1 and  c.type=1 and c.state =1 and classify_id!=1
+			and a.classify_id=#{classifyId}
+	</if>
+	
+	<if test="classifyId ==NULL ">
+		
+		SELECT
+			a.id,
+			DATE_FORMAT(a.add_date, '%Y-%m-%d') addDate,
+			b.user_name addName,
+			a.title title,
+			 c.name classifyName,
+			 "2" type
+		FROM
+			t_infor a
+		LEFT JOIN t_admin b ON a.add_person = b.id 
+		left JOIN t_classify c on a.classify_id =c.id
+		where a.state =1 and  c.type=1 and c.state =1 and classify_id!=1
+	</if>
+		
+		limit #{page,jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
+	</select>
+	
+	<select id="getCommentsClassifyCount" parameterType="HashMap" resultType="Integer">
+		select count(1) from (
+
+		<if test="classifyId !=NULL and classifyId==999">
+			SELECT
+			a.id,
+			DATE_FORMAT(a.add_date, '%Y-%m-%d') addDate,
+			b.user_name addName,
+			a.NAME title,
+
+			case a.file_type
+			when 1 then "影视管理"
+			when 2 then "音乐管理"
+			when 3 then "书籍管理"
+			else "未知模块"
+			end as classifyName,
+			"1" type
+			FROM
+			t_file a
+			LEFT JOIN t_admin b ON a.add_person = b.id
+			where a.state =1 and  a.file_type !=4
+			and a.file_type=1
+		</if>
+
+		<if test="classifyId !=NULL and classifyId==9999">
+			SELECT
+			a.id,
+			DATE_FORMAT(a.add_date, '%Y-%m-%d') addDate,
+			b.user_name addName,
+			a.NAME title,
+
+			case a.file_type
+			when 1 then "影视管理"
+			when 2 then "音乐管理"
+			when 3 then "书籍管理"
+			else "未知模块"
+			end as classifyName,
+			"1" type
+			FROM
+			t_file a
+			LEFT JOIN t_admin b ON a.add_person = b.id
+			where a.state =1 and  a.file_type !=4
+			and a.file_type=2
+		</if>
+
+		<if test="classifyId !=NULL and classifyId==99999">
+			SELECT
+			a.id,
+			DATE_FORMAT(a.add_date, '%Y-%m-%d') addDate,
+			b.user_name addName,
+			a.NAME title,
+
+			case a.file_type
+			when 1 then "影视管理"
+			when 2 then "音乐管理"
+			when 3 then "书籍管理"
+			else "未知模块"
+			end as classifyName,
+			"1" type
+			FROM
+			t_file a
+			LEFT JOIN t_admin b ON a.add_person = b.id
+			where a.state =1 and  a.file_type !=4
+			and a.file_type=3
+		</if>
+
+		<if test="classifyId ==NULL ">
+			SELECT
+			a.id,
+			DATE_FORMAT(a.add_date, '%Y-%m-%d') addDate,
+			b.user_name addName,
+			a.NAME title,
+
+			case a.file_type
+			when 1 then "影视管理"
+			when 2 then "音乐管理"
+			when 3 then "书籍管理"
+			else "未知模块"
+			end as classifyName,
+			"1" type
+			FROM
+			t_file a
+			LEFT JOIN t_admin b ON a.add_person = b.id
+			where a.state =1 and  a.file_type !=4
+			UNION
+		</if>
+
+		<if test="classifyId !=NULL and classifyId!=999 and classifyId!=9999 and classifyId!=99999">
+
+			SELECT
+			a.id,
+			DATE_FORMAT(a.add_date, '%Y-%m-%d') addDate,
+			b.user_name addName,
+			a.title title,
+			c.name classifyName,
+			"2" type
+			FROM
+			t_infor a
+			LEFT JOIN t_admin b ON a.add_person = b.id
+			left JOIN t_classify c on a.classify_id =c.id
+			where a.state =1 and  c.type=1 and c.state =1 and classify_id!=1
+			and a.classify_id=#{classifyId}
+		</if>
+
+		<if test="classifyId ==NULL ">
+
+			SELECT
+			a.id,
+			DATE_FORMAT(a.add_date, '%Y-%m-%d') addDate,
+			b.user_name addName,
+			a.title title,
+			c.name classifyName,
+			"2" type
+			FROM
+			t_infor a
+			LEFT JOIN t_admin b ON a.add_person = b.id
+			left JOIN t_classify c on a.classify_id =c.id
+			where a.state =1 and  c.type=1 and c.state =1 and classify_id!=1
+		</if>
+		) a
+	</select>
+	
+	
+	<select id="selectByPrimaryKey" resultType="HashMap" parameterType="HashMap" >
+		SELECT
+			a.id,
+			DATE_FORMAT(a.add_date, '%Y-%m-%d') addDate,
+			content,
+			b.name addName
+		FROM
+			t_comments a
+		LEFT JOIN t_user b ON a.critics = b.id
+        where foreign_id = #{id,jdbcType=INTEGER}
+        and type=#{type,jdbcType=INTEGER} and a.state=1
+		limit  #{page,jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
+    </select>
+    
+    
+    <select id="selectByPrimaryKeytotal" resultType="Integer" parameterType="HashMap" >
+        
+        select 
+         count(*) count
+       FROM
+			t_comments a
+		LEFT JOIN t_user b ON a.critics = b.id
+        where foreign_id = #{id,jdbcType=INTEGER}
+        and type=#{type,jdbcType=INTEGER}  and a.state=1
+    </select>
+</mapper>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ssms.dao.TResourceSyncMapper">
+  <resultMap id="BaseResultMap" type="cn.ssms.model.TResourceSync">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="sync_time" jdbcType="TIMESTAMP" property="syncTime" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="sync_path" jdbcType="VARCHAR" property="syncPath" />
+  </resultMap>
+
+
+  <select id="selectOneBySyncPath" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select * from t_resource_sync t where t.sync_path=#{syncPath} order by t.create_time desc limit 1
+  </select>
+
+  <insert id="insert"  useGeneratedKeys="true" keyProperty="id" parameterType="cn.ssms.model.TResourceSync" >
+    insert into t_resource_sync
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="syncTime != null and syncTime !=''" >
+        sync_time,
+      </if>
+      <if test="createTime != null and createTime !=''" >
+        create_time,
+      </if>
+      <if test="syncPath != null and syncPath !=''" >
+        sync_path,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="syncTime != null and syncTime !=''" >
+       #{syncTime},
+      </if>
+      <if test="createTime != null and createTime !=''" >
+        #{createTime},
+      </if>
+      <if test="syncPath != null and syncPath !=''" >
+        #{syncPath},
+      </if>
+    </trim>
+  </insert>
+
+</mapper>

@@ -1,0 +1,434 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.ssms.dao.AdminMapper" >
+    <resultMap id="BaseResultMap" type="cn.ssms.model.Admin" >       
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="user_code" property="userCode" jdbcType="VARCHAR" />
+        <result column="user_name" property="userName" jdbcType="VARCHAR" />
+        <result column="password" property="password" jdbcType="VARCHAR" />
+        <result column="pay_pwd" property="payPwd" jdbcType="VARCHAR" />
+		<result column="tel" property="tel" jdbcType="VARCHAR" />
+		<result column="post" property="post" jdbcType="VARCHAR" />
+        <result column="province_id" property="provinceId" jdbcType="VARCHAR" />
+        <result column="city_id" property="cityId" jdbcType="VARCHAR" />
+        <result column="area_id" property="areaId" jdbcType="VARCHAR" />
+        <result column="province" property="province" jdbcType="VARCHAR" />
+        <result column="city" property="city" jdbcType="VARCHAR" />
+        <result column="area" property="area" jdbcType="VARCHAR" />
+        <result column="id_card" property="idCard" jdbcType="VARCHAR" />       
+        <result column="culture" property="culture" jdbcType="VARCHAR" />
+        <result column="job_no" property="jobNo" jdbcType="VARCHAR" />
+        <result column="status" property="status" jdbcType="INTEGER" />
+        <result column="type" property="type" jdbcType="INTEGER" />
+        <result column="wages" property="wages" jdbcType="FLOAT" />
+        <result column="add_date" property="addDate" jdbcType="VARCHAR" />
+        <result column="update_date" property="updateDate" jdbcType="VARCHAR" />
+        <result column="del_date" property="delDate" jdbcType="VARCHAR" />
+        <result column="roles" property="roles" jdbcType="VARCHAR"/>
+        <result column="roles_str" property="rolesStr" jdbcType="VARCHAR"/>
+        <result column="region_str" property="regionStr" jdbcType="VARCHAR"/>
+        <result column="bank_no" property="bankNo" jdbcType="VARCHAR" />
+        <result column="bank_name" property="bankName" jdbcType="VARCHAR" />
+        <result column="bank_code" property="bankCode" jdbcType="VARCHAR" />
+   </resultMap>  
+        
+    <insert id="addAdmin" parameterType="cn.ssms.model.Admin" useGeneratedKeys="true" keyProperty="id">
+        insert into t_admin (user_code, user_name, 
+            password, post, 
+            status, bank_no,add_date,tel)
+        values (#{userCode,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, 
+            #{password,jdbcType=VARCHAR}, #{post,jdbcType=VARCHAR}, 
+            #{status,jdbcType=INTEGER},#{bankNo,jdbcType=VARCHAR}, now(),#{tel,jdbcType=VARCHAR})
+    </insert>
+    
+    <update id="updateByCode" parameterType="cn.ssms.model.Admin" >
+        update t_admin
+        <set >
+            <if test="userName != null" >
+                user_name = #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null" >
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="post != null" >
+                post = #{post,jdbcType=VARCHAR},
+            </if>
+            <if test="bankNo != null" >
+                bank_no = #{bankNo,jdbcType=VARCHAR},
+            </if>               
+            <if test="status != null" >
+                status = #{status,jdbcType=INTEGER},
+            </if>
+			<if test="tel != null" >
+				tel = #{tel,jdbcType=INTEGER},
+			</if>
+           <!--  <if test="addDate != null" >
+                add_date = #{addDate,jdbcType=VARCHAR},
+            </if> -->            
+         	<if test="updateDate != null" >
+                update_date = now(),
+            </if> 
+            <if test="delDate != null" >
+                del_date = now(),
+            </if>
+        </set>
+        where user_code = #{userCode,jdbcType=VARCHAR}
+		and status!=-1
+    </update>
+    
+    <delete id="removeRoleListByAdminId" parameterType="java.lang.Integer" >
+    	delete from t_admin_role where admin_id=#{adminId,jdbcType=BIGINT}
+    </delete>
+
+  	<select id="findAdminByCode" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select 
+		   		a.id, a.user_code, a.user_name, a.password, a.post, a.bank_no,a.bank_code,a.tel,
+		   		a.status, a.add_date, a.update_date, a.del_date,a.type, 
+		   		group_concat(b.role_name) as roles_str,
+		   		group_concat(b.id) as roles,
+		   		a.id_card,a.culture, a.job_no,a.province_id,a.city_id,a.area_id,
+		   		(SELECT t.fullName FROM t_region t WHERE t.code = a.province_id) as province,
+		   		(SELECT t.fullName FROM t_region t WHERE t.code = a.city_id) as city,
+		   		(SELECT t.fullName FROM t_region t WHERE t.code = a.area_id) as area	
+		    from t_admin a,t_role b,t_admin_role c
+		    where a.id=c.admin_id and c.role_id = b.id and a.status != -1 and b.state=1
+         	and	user_code = #{userCode,jdbcType=VARCHAR}
+         	group by a.id
+    </select>
+    
+     <select id="getRegionNum" resultType="java.lang.String" parameterType="java.lang.String" >
+		    SELECT b.fullName
+			FROM t_region_author a, t_region b
+			WHERE a.region_code = b.`code` AND b.type = 2 AND a.region_code = #{code,jdbcType=VARCHAR}			
+  	  </select>
+    
+     <select id="getAdminList" resultMap="BaseResultMap" parameterType="HashMap" >
+		    select 
+		   		a.id, a.user_code, a.user_name, a.post,  a.bank_no,a.tel,
+		   		a.status, a.add_date, a.update_date, a.del_date,
+		   		(SELECT group_concat(r.fullName) FROM t_region_author ra,t_region r WHERE ra.region_code = r.code AND r.type = 2 AND ra.admin_id = a.id) as region_str,
+		   		group_concat(b.role_name) as roles_str,
+		   		group_concat(b.id) as roles,
+		   		a.id_card,a.culture, a.job_no,a.province_id,a.city_id,a.area_id,
+		   		(SELECT t.fullName FROM t_region t WHERE t.code = a.province_id) as province,
+		   		(SELECT t.fullName FROM t_region t WHERE t.code = a.city_id) as city,
+		   		(SELECT t.fullName FROM t_region t WHERE t.code = a.area_id) as area		   		
+		    from t_admin a,t_role b,t_admin_role c
+		    where  a.id=c.admin_id and c.role_id = b.id  and a.status != -1 and b.state=1
+			 <if test="filter !=null and filter != 'admin'">
+				 and a.user_code != 'admin'
+			 </if>
+		  	<if test=" userName !=null and userName !=''">
+				and a.user_name like CONCAT('%',#{userName,jdbcType=VARCHAR},'%' )
+			</if>
+			<if test=" userCode !=null and userCode !=''">
+				and a.user_code like CONCAT('%',#{userCode,jdbcType=VARCHAR},'%' )
+			</if>
+			<if test=" type !=null and type !=''">
+				and a.type = #{type,jdbcType=VARCHAR}
+			</if>
+		  	group by a.id
+		  	order by add_date DESC
+			limit #{page, jdbcType=INTEGER} , #{pageSize, jdbcType=INTEGER}
+ 	 </select>
+ 	 
+ 	  <select id="getAdminListTotal" resultType="int" parameterType="HashMap" >
+		   select count(0)  from (
+			  select
+			  a.id, a.user_code, a.user_name, a.post,  a.bank_no,a.tel,
+			  a.status, a.add_date, a.update_date, a.del_date,
+			  (SELECT group_concat(r.fullName) FROM t_region_author ra,t_region r WHERE ra.region_code = r.code AND r.type = 2 AND ra.admin_id = a.id) as region_str,
+			  group_concat(b.role_name) as roles_str,
+			  group_concat(b.id) as roles,
+			  a.id_card,a.culture, a.job_no,a.province_id,a.city_id,a.area_id,
+			  (SELECT t.fullName FROM t_region t WHERE t.code = a.province_id) as province,
+			  (SELECT t.fullName FROM t_region t WHERE t.code = a.city_id) as city,
+			  (SELECT t.fullName FROM t_region t WHERE t.code = a.area_id) as area
+			  from t_admin a,t_role b,t_admin_role c
+			  where  a.id=c.admin_id and c.role_id = b.id  and a.status != -1 and b.state=1
+			  <if test="filter !=null and filter != 'admin'">
+				  and a.user_code != 'admin'
+			  </if>
+			  <if test=" userName !=null and userName !=''">
+				  and a.user_name like CONCAT('%',#{userName,jdbcType=VARCHAR},'%' )
+			  </if>
+			  <if test=" userCode !=null and userCode !=''">
+				  and a.user_code like CONCAT('%',#{userCode,jdbcType=VARCHAR},'%' )
+			  </if>
+			  <if test=" type !=null and type !=''">
+				  and a.type = #{type,jdbcType=VARCHAR}
+			  </if>
+			  group by a.id
+		  )t
+  	  </select>
+  	  
+  	  <insert id="insertAdminRole" parameterType="cn.ssms.model.AdminRole">
+  	  		insert into t_admin_role(role_id,admin_id) 
+  	  		values(#{roleId,jdbcType=BIGINT},#{adminId,jdbcType=BIGINT})
+  	  </insert>
+  	  
+  	  <delete id="removeAuthorByRole" parameterType="java.lang.Long">
+  	  		delete from t_author where role_id=#{roleId,jdbcType=BIGINT}
+  	  </delete>
+  	  <insert id="insertAuthor" parameterType="HashMap">
+  	  		insert into t_author(role_id,resource_id,author_list) 
+  	  		values(#{roleId,jdbcType=BIGINT},#{menuId,jdbcType=BIGINT},#{authorList,jdbcType=VARCHAR})
+  	  </insert>
+  	  
+  	  <insert id="addRole" parameterType="HashMap" useGeneratedKeys="true" keyProperty="roleId">
+  	  		insert into t_role(role_name,state,add_date) values(#{roleName,jdbcType=VARCHAR},1,now())
+  	  </insert>
+  	  
+  	  <delete id="removeAdminAuthorByRoleId" parameterType="java.lang.Long">
+  	  		delete from t_admin_role where role_id =#{roleId,jdbcType=BIGINT}
+  	  </delete>
+  	  
+  	  <insert id="addAdminByMap"  useGeneratedKeys="true" keyProperty="id" parameterType="HashMap" >
+	    insert into t_admin
+	    <trim prefix="(" suffix=")" suffixOverrides="," >
+	      <if test="id != null and id !=''" >
+	        id,
+	      </if>
+	      <if test="userCode != null and userCode !=''" >
+	        user_code,
+	      </if>
+	      <if test="userName != null and userName !=''" >
+	        user_name,
+	      </if>
+	      <if test="password != null and password !=''" >
+	        password,
+	      </if>
+	      <if test="payPwd != null and payPwd !=''" >
+	        pay_pwd,
+	      </if>
+	      <if test="post != null and post !=''" >
+	        post,
+	      </if>
+	     <if test="provinceId != null and provinceId !=''" >
+	        province_id,
+	      </if>
+	      <if test="cityId != null and cityId !=''" >
+	        city_id,
+	      </if>
+	       <if test="areaId != null and areaId !=''" >
+	        area_id,
+	      </if>
+	       <if test="idCard != null and idCard !=''" >
+	        id_card,
+	      </if>
+	       <if test="culture != null and culture !=''" >
+	        culture,
+	      </if>
+	       <if test="jobNo != null and jobNo !=''" >
+	        job_no,
+	      </if>
+	       <if test="bankNo != null and bankNo !=''" >
+	        bank_no,
+	      </if>
+	      <if test="bankCode != null and bankCode !=''" >
+	        bank_code,
+	      </if>
+	       add_date,status,
+	       <if test="type != null and type !=''" >
+	        type,
+	      </if>	 
+	       <if test="parentId != null and parentId !=''" >
+	        parent_id,
+	      </if>	      
+	     </trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides="," >
+	      <if test="id != null and id !=''" >
+	        #{id,jdbcType=INTEGER},
+	      </if>
+	      <if test="userCode != null and userCode !=''" >
+	        #{userCode,jdbcType=VARCHAR},
+	      </if>
+	      <if test="userName != null and userName !=''" >
+	        #{userName,jdbcType=VARCHAR},
+	      </if>
+	      <if test="password != null and password !=''" >
+	        #{password,jdbcType=VARCHAR},
+	      </if>
+	      <if test="payPwd != null and payPwd !=''" >
+	        #{payPwd,jdbcType=VARCHAR},
+	      </if>	      
+	      <if test="post != null and post !=''" >
+	        #{post,jdbcType=VARCHAR},
+	      </if>
+	      <if test="provinceId != null and provinceId !=''" >
+	        #{provinceId,jdbcType=VARCHAR},
+	      </if>
+	      <if test="cityId != null and cityId !=''" >
+	        #{cityId,jdbcType=VARCHAR},
+	      </if>
+	       <if test="areaId != null and areaId !=''" >
+	        #{areaId,jdbcType=VARCHAR},
+	      </if>
+	       <if test="idCard != null and idCard !=''" >
+	         #{idCard,jdbcType=VARCHAR},
+	      </if>
+	       <if test="culture != null and culture !=''" >
+	        #{culture,jdbcType=VARCHAR},
+	      </if>
+	       <if test="jobNo != null and jobNo !=''" >
+	        #{jobNo,jdbcType=VARCHAR},
+	      </if>
+	       <if test="bankNo != null and bankNo !=''" >
+	        #{bankNo,jdbcType=VARCHAR},
+	      </if>
+	      <if test="bankCode != null and bankCode !=''" >
+	        #{bankCode,jdbcType=VARCHAR},
+	      </if>
+	      	now(),1,
+	       <if test="type != null and type !=''" >
+	         #{type,jdbcType=INTEGER},
+	      </if>	 
+	       <if test="parentId != null and parentId !=''" >
+	         #{parentId,jdbcType=INTEGER},
+	      </if>	    
+	    </trim>
+	  </insert>    	  
+	  
+	   <update id="updateAdminById" parameterType="HashMap" >
+        update t_admin
+        <set >           
+            <if test="userName != null" >
+                user_name = #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null" >
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="post != null" >
+                post = #{post,jdbcType=VARCHAR},
+            </if>           
+            <if test="provinceId != null" >
+                province_id = #{provinceId,jdbcType=VARCHAR},
+            </if>
+            <if test="cityId != null" >
+                city_id = #{cityId,jdbcType=VARCHAR},
+            </if>
+            <if test="areaId != null" >
+                area_id = #{areaId,jdbcType=VARCHAR},
+            </if>
+            <if test="idCard != null" >
+                id_card = #{idCard,jdbcType=VARCHAR},
+            </if>
+            <if test="realName != null" >
+                real_name = #{realName,jdbcType=VARCHAR},
+            </if>
+            <if test="culture != null" >
+                culture = #{culture,jdbcType=VARCHAR},
+            </if>
+            <if test="jobNo != null" >
+                job_no = #{jobNo,jdbcType=VARCHAR},
+            </if>
+             <if test="bankNo != null" >
+               bank_no = #{bankNo,jdbcType=VARCHAR},
+            </if>
+            <if test="bankCode != null" >
+               bank_code = #{bankCode,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null" >
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="wages != null" >
+                wages = #{wages,jdbcType=FLOAT},
+            </if>
+            <if test="addDate != null" >
+                add_date = now(),
+            </if>
+            <if test="updateDate != null" >
+                update_date = now(),
+            </if>
+            <if test="delDate != null" >
+                del_date = now(),
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    
+     <select id="getPromotionUserList" resultMap="BaseResultMap" parameterType="HashMap" >
+        select 
+        <choose>
+         <when test=" null == count or count == ''">
+         	 a.id,a.user_name,a.user_code,a.type,
+			(SELECT sum(b.income) FROM t_region_promotion b WHERE referral_code = a.id
+			<if test="addStart!=null and addStart!=''">
+  				and b.add_date &gt; #{addStart,jdbcType=VARCHAR}
+  			</if>  
+  			<if test="addEnd!=null and addEnd!=''">
+  				and b.add_date  &lt;  date_sub(#{addEnd,jdbcType=VARCHAR},interval -1 day)
+  			</if> 			
+			) as wages
+         </when>
+         <otherwise>
+         	count(0) as count
+         </otherwise>
+        </choose>
+      	 FROM t_admin a 
+		 WHERE (a.type = 1 OR a.type = 3)
+		 <if test=" userName !=null and userName !=''">
+				and a.user_name like CONCAT('%',#{userName,jdbcType=VARCHAR},'%' )
+		</if>
+		<if test=" userCode !=null and userCode !=''">
+				and a.user_code like CONCAT('%',#{userCode,jdbcType=VARCHAR},'%' )
+		</if>
+		<if test=" id !=null and id !='' and userType==1">
+				and (a.id = #{id,jdbcType=INTEGER} or a.parent_id = #{id,jdbcType=INTEGER}) 
+		</if>
+		<if test=" id !=null and id !='' and userType==3">
+				and a.id = #{id,jdbcType=INTEGER} 
+		</if>
+		<if test=" parentId !=null and parentId !=''">
+				and ( a.parent_id = #{parentId,jdbcType=INTEGER}  or a.id = #{parentId,jdbcType=INTEGER} )
+		</if>
+		 <if test="null == count or count == ''">  			
+			limit #{page, jdbcType=INTEGER} , #{pageSize, jdbcType=INTEGER}
+  		</if>     
+    </select>
+	  
+	  <select id="getAdminByPwd" resultType="int" parameterType="HashMap" >
+		   select count(0) from t_admin a where  a.status != -1 and a.user_code = #{userCode,jdbcType=VARCHAR} and a.password = #{password,jdbcType=VARCHAR}
+	 </select>
+	 
+	 <select id="getAdminByPayPwd" resultType="java.lang.Integer" parameterType="HashMap" >
+		   select count(0) from t_admin a where  a.status != -1 and a.user_code = #{userCode,jdbcType=VARCHAR} and a.pay_pwd = #{payPwd,jdbcType=VARCHAR}
+	 </select>
+	<!--根据roleid查询是否有用户-->
+	<select id="findAdminByRoleId" parameterType="integer" resultMap="BaseResultMap">
+		select
+		   		a.id, a.user_code, a.user_name, a.password, a.post, a.bank_no,a.bank_code,a.tel,
+		   		a.status, a.add_date, a.update_date, a.del_date,a.type,
+		   		group_concat(b.role_name) as roles_str,
+		   		group_concat(b.id) as roles,
+		   		a.id_card,a.culture, a.job_no,a.province_id,a.city_id,a.area_id,
+		   		(SELECT t.fullName FROM t_region t WHERE t.code = a.province_id) as province,
+		   		(SELECT t.fullName FROM t_region t WHERE t.code = a.city_id) as city,
+		   		(SELECT t.fullName FROM t_region t WHERE t.code = a.area_id) as area
+		    from t_admin a,t_role b,t_admin_role c
+		    where a.id=c.admin_id and c.role_id = b.id and a.status != -1 and b.state=1
+         	and	b.id = #{id,jdbcType=VARCHAR}
+         	group by a.id
+	</select>
+	<!--判断角色名是否重复-->
+	<select id="checkRoleName" parameterType="string" resultType="integer">
+		select count(0) from t_role e where e.role_name=#{roleName,jdbcType=VARCHAR} and e.state=1
+	</select>
+	<!--判断角色是否包含当前用户-->
+	<select id="checkAdminRole" parameterType="map" resultMap="BaseResultMap">
+		select
+		   		a.id, a.user_code, a.user_name, a.password, a.post, a.bank_no,a.bank_code,a.tel,
+		   		a.status, a.add_date, a.update_date, a.del_date,a.type,
+		   		group_concat(b.role_name) as roles_str,
+		   		group_concat(b.id) as roles,
+		   		a.id_card,a.culture, a.job_no,a.province_id,a.city_id,a.area_id,
+		   		(SELECT t.fullName FROM t_region t WHERE t.code = a.province_id) as province,
+		   		(SELECT t.fullName FROM t_region t WHERE t.code = a.city_id) as city,
+		   		(SELECT t.fullName FROM t_region t WHERE t.code = a.area_id) as area
+		    from t_admin a,t_role b,t_admin_role c
+		    where a.id=c.admin_id and c.role_id = b.id and a.status != -1 and b.state=1
+         	and	b.id = #{roleId,jdbcType=VARCHAR}
+         	and a.user_code=#{code,jdbcType=VARCHAR}
+         	group by a.id
+	</select>
+</mapper>

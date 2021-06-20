@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.ssms.dao.UserMapper" >
+ 
+	 <resultMap id="BaseResultMap" type="cn.ssms.model.User" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="department" property="department" jdbcType="INTEGER" />
+      	<result column="user_code" property="userCode" jdbcType="INTEGER" />
+    	<result column="password" property="password" jdbcType="VARCHAR" />
+    	<result column="military_date" property="militaryDate" jdbcType="VARCHAR" />
+      	<result column="certificate_type" property="certificateType" jdbcType="INTEGER" />
+    	<result column="certificate_code" property="certificateCode" jdbcType="VARCHAR" />
+    	<result column="user_type" property="userType" jdbcType="INTEGER" />
+      	<result column="head_image" property="headImage" jdbcType="VARCHAR" />
+    	<result column="state" property="state" jdbcType="INTEGER" />
+    	<result column="add_date" property="addDate" jdbcType="VARCHAR" />
+    	<result column="add_person" property="addPerson" jdbcType="INTEGER"/>
+    </resultMap>
+    
+     <sql id="Base_Column_List" >
+        id, name, department,user_code,DATE_FORMAT(military_date,'%Y-%m-%d') as military_date,certificate_type,certificate_code,user_type,head_image,
+        state,add_date
+    </sql>
+    
+    <select id="selectByUserCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+    	select 
+    		<include refid="Base_Column_List"/>
+    	from t_user 
+    	where user_code=#{userCode} and state != 3
+    </select>
+    
+    <select id="loginValidation" parameterType="cn.ssms.model.User" resultMap="BaseResultMap">
+    	select 
+    		<include refid="Base_Column_List"/>
+    	from t_user
+    	where name=#{name} and password =#{password}
+    </select>
+    
+    <update id="updatePassword" parameterType="cn.ssms.model.User">
+    	update t_user 
+    		 update archives_money_info
+		    <set>
+		      <if test="name != null">
+		        name = #{name},
+		      </if>
+		      
+		       <if test="department != null">
+		        department = #{department},
+		      </if>
+		      		      
+		      <if test="password != null">
+		        password = #{password},
+		      </if>
+		      
+		      <if test="militaryDate != null">
+		        military_date = #{militaryDate},
+		      </if>
+		      
+		      <if test="certificateType != null">
+		        certificate_type = #{certificateType},
+		      </if>
+		      
+		       <if test="certificateCode != null">
+		        certificate_code = #{certificateCode},
+		      </if>
+		       		      
+		       <if test="userType != null">
+		        user_type = #{userType},
+		      </if>
+		      
+		       <if test="headImage != null">
+		        head_image = #{headImage},
+		      </if>
+		      
+		       <if test="state != null">
+		        state = #{state},
+		      </if>
+		      
+		    </set>    		
+    	where user_code=#{userCode}
+    </update>
+    
+    <update id="updateUserById" parameterType="cn.ssms.model.User">
+    	update t_user 
+    	<set>
+    		<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+		      
+			<if test="department != null">
+				department = #{department,jdbcType=INTEGER},
+			</if>
+			
+			<if test="userCode != null">
+				user_code = #{userCode,jdbcType=VARCHAR},
+			</if>
+		      		      
+			<if test="password != null">
+				password = #{password,jdbcType=VARCHAR},
+			</if>
+		      
+			<if test="militaryDate != null">
+				military_date = #{militaryDate,jdbcType=VARCHAR},
+			</if>
+		      
+			<if test="certificateType != null">
+				certificate_type = #{certificateType,jdbcType=INTEGER},
+			</if>
+		      
+			<if test="certificateCode != null">
+				certificate_code = #{certificateCode,jdbcType=VARCHAR},
+			</if>
+		       		      
+			<if test="userType != null">
+				user_type = #{userType,jdbcType=INTEGER},
+			</if>
+		      
+			<if test="headImage != null">
+				head_image = #{headImage,jdbcType=VARCHAR},
+			</if>
+		      
+			<if test="state != null">
+				state = #{state,jdbcType=INTEGER},
+			</if>
+    	</set>
+    	where id = #{id,jdbcType=INTEGER}
+    </update>
+    
+    <select id="getUserById" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    	select * from t_user where id=#{id,jdbcType=INTEGER} and state != 3 limit 0,1
+    </select>
+    
+    <insert id="addUser" useGeneratedKeys="true" keyProperty="id" parameterType="cn.ssms.model.User">
+    	insert into t_user(name,department,user_code,password,military_date,
+    		certificate_type,certificate_code,user_type,
+		<if test="headImage != null">
+			head_image,
+		</if>
+
+    		state,add_person,add_date)
+    	values(#{name,jdbcType=VARCHAR},#{department,jdbcType=VARCHAR},
+    		#{userCode,jdbcType=VARCHAR},#{password,jdbcType=VARCHAR},
+    		#{militaryDate,jdbcType=VARCHAR},#{certificateType,jdbcType=INTEGER},
+    		#{certificateCode,jdbcType=VARCHAR},#{userType,jdbcType=INTEGER},
+		<if test="headImage != null">
+			#{headImage,jdbcType=VARCHAR},
+		</if>
+    		#{state,jdbcType=INTEGER},
+    		#{addPerson,jdbcType=INTEGER},now())
+    </insert>
+    
+    <select id="selectUserByParams" resultMap="BaseResultMap" parameterType="HashMap" >
+    	select <include refid="Base_Column_List"/> from t_user
+    	<where>
+    		state != 3 and user_type !=3
+    		<if test="userCode != null">
+    			and user_code = #{userCode,jdbcType=VARCHAR}
+    		</if>
+    		<if test="name != null">
+    			and name like '%${name}%'
+    		</if>
+    		<if test="state != null">
+    			and state = #{state,jdbcType=INTEGER}
+    		</if>
+    		<if test="department != null">
+    			and department = #{department,jdbcType=INTEGER}
+    		</if>
+    	</where>
+    	<if test="beginNum != null and limitNum != null">
+    		limit #{beginNum,jdbcType=INTEGER},#{limitNum,jdbcType=INTEGER}
+    	</if>
+    </select>
+    
+    <select id="countUserByParams" resultType="java.lang.Integer" parameterType="HashMap">
+    	select count(0) from t_user
+    	<where>
+    		state != 3 and user_type !=3
+    		<if test="userCode != null">
+    			and user_code = #{userCode,jdbcType=VARCHAR}
+    		</if>
+    		<if test="name != null">
+    			and name like '%${name}%'
+    		</if>
+    		<if test="state != null">
+    			and state = #{state,jdbcType=INTEGER}
+    		</if>
+    		<if test="department != null">
+    			and department = #{department,jdbcType=INTEGER}
+    		</if>
+    	</where>
+    </select>
+	<!--证件号码判重-->
+	<select id="checkCertificateCode" parameterType="string" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List"/>
+		from t_user
+		where certificate_code=#{code} and state != 3
+	</select>
+
+	<select id="getUserByConfigId" parameterType="HashMap" resultMap="BaseResultMap" >
+		SELECT *  from t_user
+		where department=#{configId}
+		and state !=3
+	</select>
+
+</mapper>

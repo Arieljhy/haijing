@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.ssms.dao.BbsMapper" >
+    <resultMap id="BaseResultMap" type="cn.ssms.model.Bbs" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="title" property="title" jdbcType="VARCHAR" />
+        <result column="content" property="content" jdbcType="VARCHAR" />
+        <result column="image_list" property="imageList" jdbcType="VARCHAR" />
+        <result	column="floor_name"	property="floorName"	jdbcType="VARCHAR"/>
+        <result	column="bbs_id"	property="bbsId"	jdbcType="VARCHAR"/>
+        <result column="classify_id" property="classifyId" jdbcType="INTEGER" />
+       	<result	column="classify_name"	property="classifyName"	jdbcType="VARCHAR"/>
+        <result	column="type"	property="type"	jdbcType="INTEGER"/>
+        <result column="state" property="state" jdbcType="VARCHAR" />
+        <result column="add_person" property="addPerson" jdbcType="INTEGER" />
+        <result	column="add_name"	property="addName"	jdbcType="VARCHAR"/>
+        <result	column="head_image"	property="headImage"	jdbcType="VARCHAR"/>
+        <result column="add_date" property="addDate" jdbcType="VARCHAR" />
+        <result	column="del_date"	property="delDate"	jdbcType="VARCHAR"/>
+        <result column="click_count" property="clickCount" jdbcType="INTEGER" />
+		<result column="reply_count" property="replyCount" jdbcType="INTEGER" />
+		
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, title, content, image_list, classify_id, state, add_person, add_date
+    </sql>
+	<select id="getBbsList"	resultMap="BaseResultMap"	parameterType="HashMap" >
+		SELECT	b.id,DATE_FORMAT(b.add_date,'%Y-%m-%d')	add_date,b.add_person,IFNULL(u.name,u.user_code)	AS	add_name,
+				b.bbs_id,b.classify_id,(SELECT	c.name
+				FROM	t_classify	C	
+				WHERE	C.id=B.classify_id	AND	c.type=2)	AS	classify_name,
+				b.click_count,b.content,b.del_date,b.floor_name,b.image_list,
+				b.reply_count,b.state,b.title,b.type
+		FROM	t_bbs	b,t_user	u
+		WHERE	b.state!=0	AND	b.type=1	AND	b.add_person=u.id
+		<!-- <if test="addPerson !=null and addPerson !=''	">
+		用于查看个人帖子
+			<if test="flag !=null and flag !='' ">
+				AND b.id IN (SELECT a.bbs_id from t_bbs a 
+				WHERE	a.add_person=#{userId,jdbcType=INTEGER})
+			</if>
+			<if test="flag ==null or flag =='' ">
+				and t.user_id=#{addPerson,jdbcType=INTEGER}
+			</if>
+		</if> -->
+		<if test="classifyId !=null and classifyId !=''">
+			and b.classify_id=#{classifyId,jdbcType=INTEGER}
+		</if>
+		<if test="addName !=null and addName!=''">
+			and IFNULL(u.name,u.user_code) like CONCAT('%',#{addName,jdbcType=VARCHAR},'%' )
+		</if>
+		 <if test="startDate != null" >
+            and	DATE_FORMAT(b.add_date,'%Y-%m-%d') &gt;= #{startDate,jdbcType=VARCHAR}
+         </if>
+         <if test="endDate != null" >
+                 and	DATE_FORMAT(b.add_date,'%Y-%m-%d')  &lt;= #{endDate,jdbcType=VARCHAR}
+         </if>
+		<if test=" title !=null and title !=''">
+			and b.title like CONCAT('%',#{title,jdbcType=VARCHAR},'%' )
+		</if>
+		order by add_date desc
+		limit #{page,jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
+	</select>
+	<select id="getBbsListTotal" resultType="int" parameterType="HashMap">
+		SELECT	count(0)
+		FROM	t_bbs	b,t_user	u
+		WHERE	b.state!=0	AND	b.type=1	AND	b.add_person=u.id
+			<!-- <if test="addPerson !=null and addPerson !=''	">
+		用于查看个人帖子
+			<if test="flag !=null and flag !='' ">
+				AND b.id IN (SELECT a.bbs_id from t_bbs a 
+				WHERE	a.add_person=#{addPerson,jdbcType=INTEGER})
+			</if>
+			<if test="flag ==null or flag =='' ">
+				and t.user_id=#{addPerson,jdbcType=INTEGER}
+			</if>
+		</if> -->
+		<if test="classifyId !=null and classifyId !=''">
+			and b.classify_id=#{classifyId,jdbcType=INTEGER}
+		</if>
+		<if test="addName !=null and addName!=''">
+			and IFNULL(u.name,u.user_code) like CONCAT('%',#{addName,jdbcType=VARCHAR},'%' )
+		</if>
+		 <if test="startDate != null" >
+            and	DATE_FORMAT(b.add_date,'%Y-%m-%d') &gt;= #{startDate,jdbcType=VARCHAR}
+         </if>
+         <if test="endDate != null" >
+                 and	DATE_FORMAT(b.add_date,'%Y-%m-%d')  &lt;= #{endDate,jdbcType=VARCHAR}
+         </if>
+		<if test=" title !=null and title !=''">
+			and b.title like CONCAT('%',#{title,jdbcType=VARCHAR},'%' )
+		</if>
+	</select>
+	<select id="selectReply"	resultMap="BaseResultMap"	parameterType="HashMap">
+		SELECT	b.id,DATE_FORMAT(b.add_date,'%Y-%m-%d %H:%i:%s')	add_date,b.add_person,
+				IFNULL(u.name,u.user_code)	AS	add_name,u.head_image,
+				b.bbs_id,b.classify_id,
+				b.click_count,b.content,b.del_date,b.floor_name,b.image_list,
+				b.reply_count,b.state,b.title,b.type
+		FROM	t_bbs	b,t_user	u
+		WHERE	b.state!=0		AND	b.add_person=u.id
+		<if test="addPerson !=null and addPerson !=''	">
+			and	b.add_person=#{addPerson,jdbcType=INTEGER}
+		</if>
+		AND	(B.bbs_id=#{id,jdbcType=INTEGER}	or	B.id=#{id,jdbcType=INTEGER})
+		<!-- order by add_date  -->
+		limit #{page,jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
+	</select>
+	<select id="selectReplyCount"	resultType="int" parameterType="HashMap">
+		SELECT	count(0)
+		FROM	t_bbs	b,t_user	u
+		WHERE	b.state!=0		AND	b.add_person=u.id
+		<if test="addPerson !=null and addPerson !=''	">
+			and	b.add_person=#{addPerson,jdbcType=INTEGER}
+		</if>
+		AND	(B.bbs_id=#{id,jdbcType=INTEGER}	or	B.id=#{id,jdbcType=INTEGER})
+	</select>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select *
+        from t_bbs
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <insert id="insert" parameterType="cn.ssms.model.Bbs" >
+        insert into t_bbs (id, title, content, 
+            image_list, classify_id, state, 
+            add_person, add_date)
+        values (#{id,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, 
+            #{imageList,jdbcType=VARCHAR}, #{classifyId,jdbcType=INTEGER}, #{state,jdbcType=VARCHAR}, 
+            #{addPerson,jdbcType=INTEGER}, #{addDate,jdbcType=TIMESTAMP})
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="cn.ssms.model.Bbs" >
+        update t_bbs
+        <set >
+            <if test="title != null" >
+                title = #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null" >
+                content = #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="imageList != null" >
+                image_list = #{imageList,jdbcType=VARCHAR},
+            </if>
+            <if test="classifyId != null" >
+                classify_id = #{classifyId,jdbcType=INTEGER},
+            </if>
+            <if test="replyCount != null" >
+                reply_count = #{replyCount,jdbcType=INTEGER},
+            </if>
+            <if test="state != null" >
+                state = #{state,jdbcType=VARCHAR},
+            </if>
+            <if test="addPerson != null" >
+                add_person = #{addPerson,jdbcType=INTEGER},
+            </if>
+            <if test="addDate != null" >
+                add_date = #{addDate,jdbcType=VARCHAR},
+            </if>
+            <if test="delDate	!=null">
+            	del_date=now()
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateById" parameterType="cn.ssms.model.Bbs" >
+        update t_bbs
+        <set >
+            <if test="title != null" >
+                title = #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null" >
+                content = #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="imageList != null" >
+                image_list = #{imageList,jdbcType=VARCHAR},
+            </if>
+            <if test="classifyId != null" >
+                classify_id = #{classifyId,jdbcType=INTEGER},
+            </if>
+            <if test="replyCount != null" >
+                reply_count = #{replyCount,jdbcType=INTEGER},
+            </if>
+            <if test="state != null" >
+                state = #{state,jdbcType=VARCHAR},
+            </if>
+            <if test="addPerson != null" >
+                add_person = #{addPerson,jdbcType=INTEGER},
+            </if>
+            <if test="addDate != null" >
+                add_date = #{addDate,jdbcType=VARCHAR},
+            </if>
+            <if test="delDate	!=null">
+            	del_date=now()
+            </if>
+        </set>
+        where 1=1
+        and (id = #{id,jdbcType=INTEGER} or bbs_id = #{id,jdbcType=INTEGER})
+    </update>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from t_bbs
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <select id="getTbbsByClassFiyId" parameterType="HashMap" resultMap="BaseResultMap" >
+        SELECT *  FROM t_bbs
+        where 1=1
+        <if test="classifyId != null" >
+            and classify_id=#{classifyId}
+        </if>
+        and state=1
+
+    </select>
+
+</mapper>
