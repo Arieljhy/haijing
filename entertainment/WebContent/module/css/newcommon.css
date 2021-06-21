@@ -228,6 +228,11 @@ html,body{
 		}
 		
 		
+		
+		
+		
+		
+		
 		/*hhhhhhh*/
 		
 		.table-con #table_model{ 
@@ -245,6 +250,10 @@ html,body{
 		  padding:0;
 		 
 		}
+		.table-con #table_model thead tr th:last-child{
+			text-align:center;
+		 
+		}
 		.table-con #table_model tbody tr {
 		 border-bottom:1px dotted #000;
 		
@@ -255,6 +264,10 @@ html,body{
 		 border:none;
 		 background-color:#fff;
 		/*  padding:0; */
+		}
+		.table-con #table_model tbody tr td:last-child{
+			text-align:center;
+		 
 		}
 		
 		
@@ -400,5 +413,9 @@ html,body{
 		 border:none !important;
 		 
 		 }
+		 
+		 
+		 
+		 
 		
 		

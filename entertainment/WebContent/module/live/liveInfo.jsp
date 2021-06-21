@@ -194,9 +194,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 								<button type="button"  class="btn btn-info tj">提交</button>
 					</div>	
 			</div>
-			<div class="mt col-lg-12 content-panel" style="background:#fff;padding:25px 0 0 0;">
+			<div class=" col-lg-12 content-panel" style="background:#fff;padding:25px 0 0 0;height:calc(100% - 75px);">
 				<!-- <h3 id="title">新增直播</h3> -->
-				<form class="" action="" id="addResource">
+				<form class="" action="" id="addResource" style="">
 					<div class="row show-grid">
 						<div class="col-sm-10 form-horizontal" style="display:inline-block;">
 							<div class="form-group">

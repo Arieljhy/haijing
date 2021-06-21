@@ -15,6 +15,7 @@
     <meta name="keyword" content="Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
     <title></title>
     <!-- Bootstrap core CSS -->
+     <link href="<%=basePath %>module/css/newcommon.css" rel="stylesheet">
     <link href="<%=basePath %>media/assets/css/bootstrap.css" rel="stylesheet">
     <!--external css-->
     <link href="<%=basePath %>media/assets/font-awesome/css/font-awesome.css" rel="stylesheet"/>
@@ -31,11 +32,172 @@
     <!-- Custom styles for this template -->
     <link href="<%=basePath %>media/assets/css/style.css" rel="stylesheet">
     <link href="<%=basePath %>module/css/common.css" rel="stylesheet">
+    <link href="<%=basePath %>module/css/newcommon.css" rel="stylesheet">
+    <style>
+		
+		.modal-content{
+			border-radius:8px !important;
+		}
+		.modal-header{
+		background:#fff !important;
+		border-radius:8px !important;
+	
+		
+		}
+		.modal-title{
+			color:#000 !important;
+		
+		}
+		.modal-header .close{
+		height:25px !important;
+		font-size:25px !important;
+		}
+		.modal-body{
+		padding:15px 24px;
+		
+		}
+		.modal-body .input-group{
+			margin-bottom:20px !important;
+			display:flex !important;
+			justify-content:space-between !important;
+		
+		}
+		.modal-body .input-group .input-group-addon{
+			border:none !important;
+			background:#fff !important;
+			width:15% !important;
+			text-align:left !important;
+		
+		}
+		.modal-body .input-group input{
+		border-radius:4px  !important;
+		width:85% !important;
+		
+		}
+		.modal-body .input-group .dropdown{
+		width:85% !important;
+		text-align:left !important;
+		}
+		.modal-body .input-group .dropdown .dropdown-toggle{
+		width:100% !important;
+			display:flex !important;
+		
+		justify-content:space-between !important;
+		
+		
+		
+		}
+		.modal-body .input-group .dropdown .dropdown-toggle .caret{
+		margin:auto  0 !important;
+		}
+		 .modal-body .input-group .dropdown  .dropdown-menu{
+		 width:100% !important;
+		 }
+		 .modal-footer .btn-primary{
+		 background:#1890ff !important;
+		 border:none !important;
+		 
+		 }
+		 
+		 .fh{
+		 cursor:pointer;
+		 
+		 }
+		 .fh:hover{
+		
+		 text-decoration:underline;
+		  color:#1890ff;
+		 
+		 }
+		 .myform{
+		 margin:0 !important;
+		 }
+		 .form-horizontal .form-group label{
+		 color:#999 !important;
+		 	
+		 }
+		  .form-horizontal .form-group  select{
+		  width:100%;
+		 }
+		 .btn{
+		 height:32px;
+		 padding:0 10px;
+		 line-height:32px;
+		 
+		 }
+		 .btn.btn-primary{
+		 background-color:#1890ff;
+		 border:none;
+		 
+		 }
+		 .switch{
+		 }
+		 .has-switch span.switch-left{
+		 background-color:#fff;
+		 border:1px solid #1890ff;
+		  color:#1890ff;
+		 
+		 }
+		 .has-switch label {
+		     border: 1px solid #1890ff;
+		     color:#1890ff;
+		     background-color:#1890ff;
+		 }
+		 .clee:after{
+		 content: "";  
+                    display: table;  
+
+		 }
+		 .title2{
+		 width:100%;
+		 display:flex !important;
+		 justify-content:sapce-between;
+		 padding-right:0;
+		 
+		 }
+		 .title2 .left{
+		 width:80%;
+		 text-align:left;
+		 
+		 }
+		 .title2 .right{
+	 width:20%;
+		
+		 
+		 }
+		 .title2 .right button{
+		 	float:right;
+		 	margin-left:10px;
+		 	
+		 }
+		  .title2 .right  .btn.btn-info{
+		 	float:right;
+		 	margin-left:10px;
+		 	
+		
+		 background-color:#1890ff  !important;
+		 border:none;
+		 
+		 }
+		
+		</style>
 </head>
 <body>
-<section class="wrapper">
-    <div class="mt col-lg-12 content-panel">
-        <h3 id="title">回放视频</h3>
+<section class="wrapper w1">
+	<div class="title1">
+					<span>直播管理</span><span>/</span><span class="fh">直播列表</span><span>>></span><span id="ttt">回放视频</span>
+			</div>
+			<div class="title2">
+					<div class="left" id="title">回放视频</div>
+					<div class="right">
+								<button type="button" class="btn btn-default fh" >返回</button>
+								<button type="button"  class="btn btn-info tj" onclick="videoPlay()">播放视频</button>
+					</div>	
+			</div>
+			
+			
+    <div class="col-lg-12 content-panel" style="background:#fff;padding:25px;height:calc(100% - 75px);">
+     <!--    <h3 id="title">回放视频</h3> -->
 
         <form class="" action="">
             <div class="row show-grid">
@@ -50,9 +212,10 @@
                             </object>
                         </div>
                     </div>--%>
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label">回放</label>
-                        <div class="col-sm-8">
+                    
+                    <div class="form-group" style="width:100%;">
+                      <label class="col-sm-12 col-lg-12 control-label" style="margin-bottom:20px;">回放</label>
+                        <div class="col-sm-12 col-lg-12 ">
                             <%--<video id="videoElement"
                                    style="background:#eeeef3;width:320px;height: 240px;"></video>--%>
                             <div id="videoElement" style="background:#eeeef3;width:640px;height: 480px;"></div>
@@ -99,10 +262,10 @@
             <div class="row">
                 <div class="form-group">
                     <div class="col-sm-8">
-                        <button type="button" id="back" class="btn btn-default">返回</button>
+                        <button type="button" id="back" class="btn btn-default" style="display:none;">返回</button>
                         <%--<button type="button" class="btn btn-info" onclick="startPush()">开始直播推流</button>
                         <button type="button" class="btn btn-warning" onclick="disconnectPush()">停止直播推流</button>--%>
-                        <button type="button" class="btn btn-info" onclick="videoPlay()">播放视频</button>
+                        <button type="button" class="btn btn-info" onclick="videoPlay()" style="display:none;">播放视频</button>
                     </div>
                 </div>
             </div>
@@ -113,6 +276,20 @@
 
 <!-- js placed at the end of the document so the pages load faster -->
 <script src="<%=basePath %>media/assets/js/jquery.js"></script>
+<script type="text/javascript">
+		$(function(){
+	
+		
+			
+			$('.fh').click(function(){
+				$("#back").trigger('click');
+			})
+			
+			
+			
+		})
+			
+		</script>
 <script src="<%=basePath %>media/assets/js/bootstrap.min.js"></script>
 <%--<script src="<%=basePath %>module/js/rtmp-stream/flv.min.js"></script>--%>
 <%--<script type="text/javascript" src="<%=basePath %>module/js/rtmp-stream/require.js"></script>--%>

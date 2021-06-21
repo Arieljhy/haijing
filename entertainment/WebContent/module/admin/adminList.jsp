@@ -91,6 +91,46 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		 border:none !important;
 		 
 		 }
+		 
+		 .pagination_new.pagination_new-centered ul li:nth-child(1) a{
+		color:#666 !important;
+		border:1px solid #eee  !important;
+		}
+		.pagination_new.pagination_new-centered ul li:nth-child(2) a{
+		color:#666 !important;
+		border:1px solid #eee  !important;
+		}
+		.pagination_new.pagination_new-centered ul li:nth-child(3) a{
+		color:#666 !important;
+		border:1px solid #eee  !important;
+		}
+		.pagination_new.pagination_new-centered ul li:last-child a{ 
+		
+		border:1px solid #eee !important;
+		color:#666 !important;
+		
+		}
+		.pagination_new.pagination_new-centered ul li:nth-last-child(2) a{ 
+		
+		border:1px solid #eee !important;
+		color:#666 !important;
+		
+		
+		}
+		.pagination_new.pagination_new-centered ul li:nth-last-child(3) a{ 
+		
+		border:1px solid #eee !important;
+		color:#666 !important;
+		
+		
+		}
+		.pagination_new.pagination_new-centered ul li:nth-last-child(4) a{ 
+		
+		border:1px solid #eee !important;
+		color:#666 !important;
+		
+		
+		}
 		
 		
 		</style>

@@ -202,13 +202,53 @@
 		 border:none;
 		 
 		 }
+		 
+		 .pagination_new.pagination_new-centered ul li:nth-child(1) a{
+		color:#666 !important;
+		border:1px solid #eee  !important;
+		}
+		.pagination_new.pagination_new-centered ul li:nth-child(2) a{
+		color:#666 !important;
+		border:1px solid #eee  !important;
+		}
+		.pagination_new.pagination_new-centered ul li:nth-child(3) a{
+		color:#666 !important;
+		border:1px solid #eee  !important;
+		}
+		.pagination_new.pagination_new-centered ul li:last-child a{ 
+		
+		border:1px solid #eee !important;
+		color:#666 !important;
+		
+		}
+		.pagination_new.pagination_new-centered ul li:nth-last-child(2) a{ 
+		
+		border:1px solid #eee !important;
+		color:#666 !important;
+		
+		
+		}
+		.pagination_new.pagination_new-centered ul li:nth-last-child(3) a{ 
+		
+		border:1px solid #eee !important;
+		color:#666 !important;
+		
+		
+		}
+		.pagination_new.pagination_new-centered ul li:nth-last-child(4) a{ 
+		
+		border:1px solid #eee !important;
+		color:#666 !important;
+		
+		
+		}
 		
 		</style>
 </head>
 <body>
 	<section class="wrapper w1">
 		<div class="title1">
-					<span>测试管理</span><span>/</span><span class="fh">心理问卷管理</span><span>>></span><span id="ttt">查看详情</span>
+					<span>测试管理</span><span>/</span><span class="fh" id="mytit"></span><span>>></span><span id="ttt">查看详情</span>
 			</div>
 			<div class="title2">
 					<div class="left" id="title" ></div>
@@ -217,7 +257,7 @@
 								<!-- <button type="button"  class="btn btn-info tj">提交</button> -->
 					</div>	
 			</div>
-		<div class="row ">
+		<div class="row " style="height:calc(100% - 75px);">
 			<div class="col-lg-12" >
 				<div class="content-panel" style="background:#fff;padding:25px 0 0 0;">
 					<input	type="hidden"	id="testId"	value="">

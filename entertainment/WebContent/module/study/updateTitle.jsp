@@ -235,13 +235,84 @@
 		 border:none;
 		 
 		 }
+		 
+		 .content-panel form{
+		 
+		 margin-top:0 !important;
+		 
+		 }
+		 .form-horizontal .form-group{
+		 	margin:0 !important;
+		 	margin-bottom:20px !important;
+		 }
+	
+		 
+		/*form group table*/
+		.form-group .table-con{
+		/* padding:0 16px; */
+		
+		/* height:calc(100% - 120px); */
+		padding:0 24px;
+		
+		overflow-y:auto;
+		
+		}
+		.form-group .table-con table{ 
+		 border:none;
+		}
+		.form-group .table-con table thead  tr {
+		 border-bottom:1px dotted #000;
+		
+		}
+		.form-group .table-con table thead tr th{
+		    background-color: #f9f9f9 !important;
+   
+   
+
+		 border:none;
+		 background-color:#f9f9f9;
+		 height:34px;
+		 line-height:34px;
+		  padding:0;
+		 
+		}
+		.form-group .table-con table tbody tr {
+		 border-bottom:1px dotted #000 !important;
+		
+		}
+		.form-group .table-con table tbody tr td{
+		 height:34px;
+		 line-height:34px;
+		 border:none;
+		 background-color:#fff;
+		 padding:0;
+		}
+		
+		
+		
+		.form-group .table-con table tbody tr td:last-child a{
+			
+		color:#1890FF;
+		
+		}
+		
+		.layui-layer.layui-layer-page{
+		
+		}
+		.layui-layer-content{
+		 position:relative;
+		
+		}
+		.layui-layer-wrap{
+		
+		}
 		
 		</style>
 </head>
 <body>
 <section class="wrapper w1">
 <div class="title1">
-					<span>测试管理</span><span>/</span><span class="fh">心理问卷管理</span><span>>></span><span id="ttt">${type==1?'修改问卷调查':'修改在线考试'}</span>
+					<span>测试管理</span><span>/</span><span class="fh">${type==1?'心理问卷管理':'在线考试管理'}</span><span>>></span><span id="ttt">${type==1?'修改问卷调查':'修改在线考试'}</span>
 			</div>
 			<div class="title2">
 					<div class="left" id="title">${type==1?'修改问卷调查':'修改在线考试'}</div>
@@ -250,51 +321,58 @@
 								<button type="button"  class="btn btn-info tj">提交</button>
 					</div>	
 			</div>
-	<div class=" col-lg-12 content-panel" style="background:#fff;padding:25px 0 0 0;">
+	<div class="col-lg-12 content-panel" style="width:100%;background:#fff;padding:25px 0 0 0;">
 	<%-- 	<h3>${type==1?'修改问卷调查':'修改在线考试'}</h3> --%>
 		<form class="" action="">
 			<input id="testId" type="hidden">
-			<div class="row show-grid" style="background:#fff;padding:25px 0 0 0;">
-				<div class="col-sm-10 form-horizontal" style="display:inline-block;">
-					<div class="form-group">
-						<label class="col-sm-2 control-label" for="title">${type==1?'问卷标题':'考试标题'}</label>
-						<div class="col-sm-8">
+			<div class="row show-grid" style="width:100%;background:#fff;height:calc(100% - 75px);">
+				<div class="col-sm-12  form-horizontal " style="display:inline-block;width:100%;">
+					<div class="form-group" style="width:100%;" >
+						<label class="col-sm-3 control-label" for="title">${type==1?'问卷标题':'考试标题'}</label>
+						<div class="col-sm-10">
 							<input type="text" data-trigger="" class="form-control" data-title="必填" id="studyTitle" maxlength="30">
 							<input type="hidden" id="studyType" value="${type}">
 						</div>
 					</div>
-					<div class="form-group">
-						<label class="col-sm-2 control-label" for="remark">内容</label>
-						<div class="col-sm-8">
+					<div class="form-group" style="width:100%;">
+						<label class="col-sm-3 control-label" for="remark">内容</label>
+						<div class="col-sm-10">
 							<%--<script id="remark" style="height:400px;" name="remark" type="text/plain"></script>--%>
-								<textarea cols="50" id="remark" name="remark" rows="4"></textarea>
+								<textarea cols="130" id="remark" name="remark" rows="4"></textarea>
 						</div>
 					</div>
-					<div class="form-group">
-						<label class="col-sm-2 control-label" for="resultAnalyse">评分标准</label>
-						<div class="col-sm-8">
+					<div class="form-group" style="width:100%;">
+						<label class="col-sm-3 control-label" for="resultAnalyse">评分标准</label>
+						<div class="col-sm-10">
 							<script id="resultAnalyse" style="height:400px;" name="resultAnalyse" type="text/plain"></script>
 						</div>
 					</div>
-					<div class="form-group">
-						<div class="col-sm-8">
-							<button type="button" id="addTitle" class="btn btn-default">添加题目</button>
+					
+					
+					<div class="form-group" style="width:100%;">
+						<label class=" col-sm-3 control-label" >题目列表</label>
+						<div class="col-sm-10"  style=" text-align:right;">
+							<button type="button" id="addTitle" class="btn btn-default" style="background:#1890ff;border:none; color:#fff;">添加题目</button>
 						</div>
 					</div>
 
-					<div class="form-group" style="background:#fff;padding:25px 0 0 0;">
-						<label class="col-sm-2 control-label" >题目列表</label>
-						<table id="titleTable" style="">
-							<thead>
-							<tr>
-								<th>标题</th><th>题目类型</th><th>正确答案</th><th>操作</th>
-							</tr>
-							</thead>
-							<tbody>
-
-							</tbody>
-
-						</table>
+					<div class="form-group" style="width:100%;background:#fff;">
+					 <label class=" col-sm-3 control-label" ></label> 
+							<div class="table-con col-sm-10" style="padding-left:10px;padding-right:0px;">
+							<table id="titleTable" style="margin-left:0;">
+									<thead style="background:#f9f9f9;">
+									<tr>
+										<th>标题</th><th>题目类型</th><th>正确答案</th><th>操作</th>
+									</tr>
+									</thead>
+									<tbody>
+		
+									</tbody>
+		
+								</table>
+							
+							</div>
+						
 					</div>
 
 
@@ -312,18 +390,18 @@
 	</div>
 </section>
 
-<div id="addShow" style="display: none;margin:10px 10px;">
+<div id="addShow" style="display: none;margin:10px 10px; ">
 	<div class="row show-grid">
-		<div class="col-sm-10 form-horizontal" style="display:inline-block;">
+		<div class="col-sm-12 form-horizontal" style="display:inline-block;">
 			<div class="form-group">
 				<label class="col-sm-2 control-label" for="title">题目标题</label>
-				<div class="col-sm-8">
+				<div class="col-sm-10">
 					<input type="text" data-trigger="" class="form-control" data-title="必填" id="title" placeholder="题目标题">
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="col-sm-2 control-label" for="remark">题目类型</label>
-				<div class="col-sm-8">
+				<div class="col-sm-10">
 					<select id="type">
 						<option value="1">单选</option>
 						<option value="2">多选</option>
@@ -331,31 +409,36 @@
 				</div>
 			</div>
 			<div class="form-group">
-				<div class="col-sm-8">
-					<button type="button" id="addAnser" class="btn btn-default">添加答案</button>
+			<label class="col-sm-2 control-label" >答案列表</label>
+				<div class="col-sm-10" style="text-align:right;">
+					<button type="button" id="addAnser" class="btn btn-default" style="background:#1890ff;border:none; color:#fff;">添加答案</button>
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-2 control-label" >答案列表</label>
-				<table id="ansersTable" style="width:100%;margin-left: 20px;">
-					<thead>
-					<tr>
-						<th>选项</th><th>内容</th><th>分值</th><th>正确答案</th>
-					</tr>
-					</thead>
-					<tbody>
-
-					</tbody>
-
-				</table>
+				<!-- <label class="col-sm-2 control-label" >答案列表</label> -->
+			
+				<div class="table-con col-sm-11" style="padding-left:10px;padding-right:0px;">
+						<table id="ansersTable" style="width:100%;margin-left: 20px;">
+							<thead>
+							<tr>
+								<th>选项</th><th>内容</th><th>分值</th><th>正确答案</th>
+							</tr>
+							</thead>
+							<tbody>
+		
+							</tbody>
+		
+						</table>
+				</div>
+				
 			</div>
 		</div>
 	</div>
-	<div class="row" style="text-align: center;">
+	<div class="row" style="text-align: right; position:absolute; right:24px;left:0; bottom:20px; height:34px;">
 		<div class="form-group">
 			<div class="col-sm-16">
 				<button type="button" id="titleBack" class="btn btn-default">返回</button>
-				<button type="button" id="titleSubmit" class="btn btn-info">提交</button>
+				<button type="button" id="titleSubmit" class="btn btn-info" style="background-color:#1890ff;">提交</button>
 			</div>
 		</div>
 	</div>
@@ -367,14 +450,14 @@
 
 <div id="viewTitle" style="display: none;margin:10px 10px;">
 	<div class="row show-grid">
-		<div class="col-sm-10 form-horizontal" style="display:inline-block;">
-			<div class="form-group">
+		<div class="col-sm-12 form-horizontal" style="display:inline-block;">
+			<div class="form-group" style="width:100%;">
 				<label class="col-sm-2 control-label" for="title">题目标题</label>
 				<div class="col-sm-8">
 					<input type="text" data-trigger="" class="form-control" data-title="必填" readonly="readonly" id="title" placeholder="题目标题">
 				</div>
 			</div>
-			<div class="form-group">
+			<div class="form-group"  style="width:100%;">
 				<label class="col-sm-2 control-label" for="remark">题目类型</label>
 				<div class="col-sm-8">
 					<select id="type" readonly="readonly">
@@ -383,12 +466,12 @@
 					</select>
 				</div>
 			</div>
-			<div class="form-group">
+			<div class="form-group"  style="width:100%;">
 				<label class="col-sm-2 control-label" >答案列表</label>
 				<table id="ansersTable" style="width:100%;margin-left: 20px;">
 					<thead>
 					<tr>
-						<th>选项</th><th>内容</th><th>分值</th><th>正确答案</th>
+						<th>11选项</th><th>内容</th><th>分值</th><th>正确答案</th>
 					</tr>
 					</thead>
 					<tbody>
@@ -400,7 +483,7 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="form-group">
+		<div class="form-group"  style="width:100%;">
 			<div class="col-sm-8">
 				<button type="button" id="viewBack" class="btn btn-default">返回</button>
 			</div>

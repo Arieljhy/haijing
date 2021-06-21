@@ -25,8 +25,10 @@ $(function(){
 		success:function(data){
 			if(type==1){
 				$("#title").html("心理测评-试卷题目："+data.title);
+				$("#mytit").html("心理问卷管管理");
 			}else{
 				$("#title").html("网上考试-试卷题目："+data.title);
+				$("#mytit").html("在线考试管理");
 			}
 
 			$("#testName").val(data.title);

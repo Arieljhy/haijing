@@ -194,7 +194,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 								<button type="button"  class="btn btn-info tj">提交</button>
 					</div>	
 			</div>
-			<div class="col-lg-12 content-panel" style="background:#fff;padding:25px 0 0 0;">
+			<div class="col-lg-12 content-panel" style="background:#fff;padding:25px 0 0 0;height:calc(100% - 72px);">
 				<!-- <h3 id="title">新增视频</h3> -->
 				<form class="" action="">
 					<div class="row show-grid">

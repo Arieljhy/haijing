@@ -9,9 +9,12 @@ var table;//表格
 
 $(function(){
 	var params=GetUrlParms();
+		
 	$("#testId").val(params.testId);
 	$("#userId").val(params.userId);
 	$("#title").html("试卷题目"+params.title);
+	console.log("ttt",params);
+	
 	$("#str").html(params.userName+"的得分为_"+params.score+"_分");
 	$("#remark").html("总题数："+params.totalCount+",正确题数："+params.trueCount+",错误题数："+params.errorCount);
 	initEvent();

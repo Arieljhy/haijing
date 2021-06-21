@@ -202,13 +202,54 @@
 		 border:none;
 		 
 		 }
+		 
+		 
+		 .pagination_new.pagination_new-centered ul li:nth-child(1) a{
+		color:#666 !important;
+		border:1px solid #eee  !important;
+		}
+		.pagination_new.pagination_new-centered ul li:nth-child(2) a{
+		color:#666 !important;
+		border:1px solid #eee  !important;
+		}
+		.pagination_new.pagination_new-centered ul li:nth-child(3) a{
+		color:#666 !important;
+		border:1px solid #eee  !important;
+		}
+		.pagination_new.pagination_new-centered ul li:last-child a{ 
+		
+		border:1px solid #eee !important;
+		color:#666 !important;
+		
+		}
+		.pagination_new.pagination_new-centered ul li:nth-last-child(2) a{ 
+		
+		border:1px solid #eee !important;
+		color:#666 !important;
+		
+		
+		}
+		.pagination_new.pagination_new-centered ul li:nth-last-child(3) a{ 
+		
+		border:1px solid #eee !important;
+		color:#666 !important;
+		
+		
+		}
+		.pagination_new.pagination_new-centered ul li:nth-last-child(4) a{ 
+		
+		border:1px solid #eee !important;
+		color:#666 !important;
+		
+		
+		}
 		
 		</style>
 </head>
 <body>
 	<section class="wrapper w1">
 		<div class="title1">
-					<span>测试管理</span><span>/</span><span class="fh">心理问卷管理</span><span>>></span><span id="ttt">答题情况</span>
+					<span>测试管理</span><span>/</span><span class="fh" id="mytit"></span><span>>></span><span id="ttt">答题情况</span>
 			</div>
 			<div class="title2">
 					<div class="left" id="title" >答题情况</div>
@@ -220,7 +261,7 @@
 		
 		<div class="row ">
 			<div class="col-lg-12" style="background:#fff;padding:25px 0 0 0;">
-				<div class="content-panel">
+				<div class="content-panel" style="height:calc(100% - 79px);">
 					<input	type="hidden"	id="testId"	value="">
 					<input	type="hidden"	id="testName"	value="">
 					<h4 id="title"></h4>
@@ -228,7 +269,7 @@
 					<h4>
 						<input  class="btn btn-info" type="button" id="export" value="导出">
 					</h4>
-					<div class="table-con">
+					<div class="table-con" style="height:calc(100% - 200px);">
 					<table id="table_model" class="table table-bordered table-striped table-condensed cf">
 								</table>
 								</div>

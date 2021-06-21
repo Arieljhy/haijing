@@ -46,6 +46,7 @@ function initEvent() {
 //修改绑定事件
 function initUpdEvent(id) {
     $("#title").html('回放直播');
+     $("#ttt").html('回放直播');
     writeData(id);
 }
 
@@ -80,6 +81,7 @@ function writeData(id) {
 //新增绑定事件
 function initAddEvent() {
     $("#title").html('新增直播');
+     $("#ttt").html('新增直播');
     $("#submit").one('click', function () {
         addResource();
     });

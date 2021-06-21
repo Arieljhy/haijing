@@ -45,6 +45,199 @@
         }
 
     </style>
+    
+    <style>
+		
+		.modal-content{
+			border-radius:8px !important;
+		}
+		.modal-header{
+		background:#fff !important;
+		border-radius:8px !important;
+	
+		
+		}
+		.modal-title{
+			color:#000 !important;
+		
+		}
+		.modal-header .close{
+		height:25px !important;
+		font-size:25px !important;
+		}
+		.modal-body{
+		padding:15px 24px;
+		
+		}
+		.modal-body .input-group{
+			margin-bottom:20px !important;
+			display:flex !important;
+			justify-content:space-between !important;
+		
+		}
+		.modal-body .input-group .input-group-addon{
+			border:none !important;
+			background:#fff !important;
+			width:15% !important;
+			text-align:left !important;
+		
+		}
+		.modal-body .input-group input{
+		border-radius:4px  !important;
+		width:85% !important;
+		
+		}
+		.modal-body .input-group .dropdown{
+		width:85% !important;
+		text-align:left !important;
+		}
+		.modal-body .input-group .dropdown .dropdown-toggle{
+		width:100% !important;
+			display:flex !important;
+		
+		justify-content:space-between !important;
+		
+		
+		
+		}
+		.modal-body .input-group .dropdown .dropdown-toggle .caret{
+		margin:auto  0 !important;
+		}
+		 .modal-body .input-group .dropdown  .dropdown-menu{
+		 width:100% !important;
+		 }
+		 .modal-footer .btn-primary{
+		 background:#1890ff !important;
+		 border:none !important;
+		 
+		 }
+		 
+		 .fh{
+		 cursor:pointer;
+		 
+		 }
+		 .fh:hover{
+		
+		 text-decoration:underline;
+		  color:#1890ff;
+		 
+		 }
+		 .myform{
+		 margin:0 !important;
+		 }
+		 .form-horizontal .form-group label{
+		 color:#999 !important;
+		 	
+		 }
+		  .form-horizontal .form-group  select{
+		  width:100%;
+		 }
+		 .btn{
+		 height:32px;
+		 padding:0 10px;
+		 line-height:32px;
+		 
+		 }
+		 .btn.btn-primary{
+		 background-color:#1890ff;
+		 border:none;
+		 
+		 }
+		 .switch{
+		 }
+		 .has-switch span.switch-left{
+		 background-color:#fff;
+		 border:1px solid #1890ff;
+		  color:#1890ff;
+		 
+		 }
+		 .has-switch label {
+		     border: 1px solid #1890ff;
+		     color:#1890ff;
+		     background-color:#1890ff;
+		 }
+		 .clee:after{
+		 content: "";  
+                    display: table;  
+
+		 }
+		 .title2{
+		 width:100%;
+		 display:flex !important;
+		 justify-content:sapce-between;
+		 padding-right:0;
+		 
+		 }
+		 .title2 .left{
+		 width:80%;
+		 text-align:left;
+		 
+		 }
+		 .title2 .right{
+	 width:20%;
+		
+		 
+		 }
+		 .title2 .right button{
+		 	float:right;
+		 	margin-left:10px;
+		 	
+		 }
+		  .title2 .right  .btn.btn-info{
+		 	float:right;
+		 	margin-left:10px;
+		 	
+		
+		 background-color:#1890ff  !important;
+		 border:none;
+		 
+		 }
+		 
+		 
+		 .panel{
+		  position:relative;
+		  height:240px;
+		    margin-top:10px;
+		  margin-bottom:40px;
+		 
+		 }
+		 .panel-heading{
+		 width:100%;
+		position:absolute;
+		 top:0;
+		 left:0;
+		 right:0;
+		 height:40px;
+		 display:flex;
+		 justify-content:space-between;
+		 
+		 
+		 }
+		 
+		  .panel-heading a:last-child
+		  { 
+		  font-size:20px;
+		  font-weight:600;
+		  line-height:19px;
+		  }
+		 ul.list-group{
+		
+		 
+		 width:100%;
+		position:absolute;
+		 bottom:0;
+		 left:0;
+		 right:0;
+		 height:200px;
+		 overflow-y: auto;
+		 margin-top:40px;
+		 
+		 }
+		 .list-group{
+		 background-color:#fff;
+		 }
+		
+		</style>
 </head>
 
 
@@ -62,13 +255,13 @@
 			</div>
 			
 			
-			<div class="row">
-				<div class="col-lg-12">
-					<div class="content-panel">
+			<div class="row" style="background:#fff;" >
+				<div class="col-lg-12" >
+					<div class="content-panel" style="background:#fff;padding:25px;height:calc(100% - 75px);">
 					
 			<section style="width: 30%;float: left;margin-right: 3%">
 
-    <div class="panel panel-default" id="first8" style="overflow-y: auto;height:240px">
+    <div class="panel panel-default" id="first8" style="">
         <div class="panel-heading" >
             <a <%--onclick="showSecond(8)"--%>  href="#">用户管理-部门</a>
             <a style="margin-left: 50px;" onclick="show(8,'部门')"  href="#">+</a>

@@ -214,7 +214,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	<body>
 		<section class="wrapper w1">
 		<div class="title1">
-					<span>测试管理</span><span>/</span><span class="fh">心理问卷管理</span><span>>></span><span id="ttt">${type==1?'新增问卷调查':'新增在线考试'}</span>
+					<span>测试管理</span><span>/</span><span class="fh">${type==1?'心理问卷管理':'在线考试管理'}</span><span>>></span><span id="ttt">${type==1?'新增问卷调查':'新增在线考试'}</span>
 			</div>
 			<div class="title2">
 					<div class="left" >${type==1?'新增问卷调查':'新增在线考试'}</div>
@@ -239,7 +239,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 								<label class="col-sm-2 control-label" for="remark">内容</label>
 								<div class="col-sm-8">
 									<%--<script id="remark" style="height:400px;" name="remark" type="text/plain"></script>--%>
-									<textarea cols="50" id="remark" name="remark" rows="4"></textarea>
+									<textarea cols="87" id="remark" name="remark" rows="4"></textarea>
 								</div>
 							</div>
 							<div class="form-group">

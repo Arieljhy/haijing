@@ -10,6 +10,7 @@ var table;//表格
 $(function(){
 	var params=GetUrlParms();
 	$("#testId").val(params.id);
+var	type=params.type;
 
 
 	initEvent();
@@ -24,6 +25,15 @@ $(function(){
 		success:function(data){
 			$("#remark").html(data.remark?data.remark:'');
 			$("#title").html(data.title?data.title:'');
+			if(type==1){
+			
+				
+				$("#mytit").html("心理问卷管管理");
+			}else{
+				
+				$("#mytit").html("在线考试管理");
+			}
+			
 			var totalCount=0;
 			var replyCount=0;
 			if(data.totalCount ){

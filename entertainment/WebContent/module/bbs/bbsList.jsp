@@ -46,6 +46,45 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     border: 1px solid #ccc;
     border-radius: 4px;
 	}
+	.pagination_new.pagination_new-centered ul li:nth-child(1) a{
+		color:#666 !important;
+		border:1px solid #eee  !important;
+		}
+		.pagination_new.pagination_new-centered ul li:nth-child(2) a{
+		color:#666 !important;
+		border:1px solid #eee  !important;
+		}
+		.pagination_new.pagination_new-centered ul li:nth-child(3) a{
+		color:#666 !important;
+		border:1px solid #eee  !important;
+		}
+		.pagination_new.pagination_new-centered ul li:last-child a{ 
+		
+		border:1px solid #eee !important;
+		color:#666 !important;
+		
+		}
+		.pagination_new.pagination_new-centered ul li:nth-last-child(2) a{ 
+		
+		border:1px solid #eee !important;
+		color:#666 !important;
+		
+		
+		}
+		.pagination_new.pagination_new-centered ul li:nth-last-child(3) a{ 
+		
+		border:1px solid #eee !important;
+		color:#666 !important;
+		
+		
+		}
+		.pagination_new.pagination_new-centered ul li:nth-last-child(4) a{ 
+		
+		border:1px solid #eee !important;
+		color:#666 !important;
+		
+		
+		}
 	</style>
 	</head>
 	<body>
@@ -59,9 +98,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			</div>
 		
 		
-			<div class="row">
-				<div class="col-lg-12">
-					<div class="content-panel">
+			<div class="row" style="">
+				<div class="col-lg-12" >
+					<div class="content-panel" style=" height:calc(100% - 45px);">
 				
 							<!-- <button type="button" class="btn btn-theme04" id="removeBtn" >
 								<i class="fa fa-remove"></i> 删除
@@ -149,7 +188,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 								</table>
 								<div id="page_moodel"></div>
 						</section> -->
-						<section id="no-more-tables" class="content">
+					<section id="no-more-tables" class="content">
 								<div class="con-top">
 									<div class="tit left">
 									帖子列表
@@ -167,7 +206,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 									
 							 
 							</div>
-							<div class="table-con" style="height:calc(100% - 162px);">
+							<div class="table-con" style="height:calc(100% - 120px);">
 									<table id="table_model"
 										class="table table-bordered table-striped table-condensed cf">
 									</table>
